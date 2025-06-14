@@ -195,7 +195,26 @@ const ReportForm = ({ mode, onBack }: ReportFormProps) => {
             </div>
           );
         }
-        return <div>Detailed form step 3</div>;
+        return (
+          <div className="space-y-6">
+            <div className="text-center">
+              <h3 className="text-xl font-semibold mb-2">Detaljerad Beskrivning</h3>
+              <p className="text-slate-600 dark:text-slate-300">
+                Beskriv detaljerat vad du observerade
+              </p>
+            </div>
+            <div>
+              <Label htmlFor="detailedDescription">Detaljerad beskrivning</Label>
+              <Textarea
+                id="detailedDescription"
+                placeholder="Beskriv så detaljerat som möjligt vad du såg..."
+                value={formData.description}
+                onChange={(e) => handleInputChange('description', e.target.value)}
+                className="min-h-[120px]"
+              />
+            </div>
+          </div>
+        );
 
       case 4:
         return (
@@ -214,9 +233,9 @@ const ReportForm = ({ mode, onBack }: ReportFormProps) => {
                     <SelectValue placeholder="Välj storlek" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="small">Liten (< 25cm)</SelectItem>
+                    <SelectItem value="small">Liten (&lt; 25cm)</SelectItem>
                     <SelectItem value="medium">Medel (25-100cm)</SelectItem>
-                    <SelectItem value="large">Stor (> 100cm)</SelectItem>
+                    <SelectItem value="large">Stor (&gt; 100cm)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
