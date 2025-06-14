@@ -13,9 +13,21 @@ interface SecureCameraCaptureProps {
 
 const SecureCameraCapture = ({ onCapture }: SecureCameraCaptureProps) => {
   const [capturedFiles, setCapturedFiles] = useState<File[]>([]);
-  const [isCapturing, setIsCapturing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+
+  const getFileValidationError = (errorKey: string | undefined): string => {
+    switch (errorKey) {
+      case 'fileTooLarge':
+        return 'Filen är för stor (max 10MB)';
+      case 'invalidFileType':
+        return 'Ogiltig filtyp (endast JPEG, PNG, WebP, MP4, WebM)';
+      case 'invalidFileName':
+        return 'Filnamnet innehåller ogiltiga tecken';
+      default:
+        return 'Ett okänt valideringsfel uppstod';
+    }
+  };
 
   const handleFileValidation = (files: FileList | null) => {
     if (!files) return;
@@ -28,7 +40,7 @@ const SecureCameraCapture = ({ onCapture }: SecureCameraCaptureProps) => {
       if (validation.isValid) {
         validFiles.push(file);
       } else {
-        errors.push(`${file.name}: ${validation.error}`);
+        errors.push(`${file.name}: ${getFileValidationError(validation.errorKey)}`);
       }
     });
 
@@ -44,8 +56,17 @@ const SecureCameraCapture = ({ onCapture }: SecureCameraCaptureProps) => {
       // Limit total files to 5
       if (newFiles.length > 5) {
         toast.error('För många filer', {
-          description: 'Maxmalt 5 filer tillåtna'
+          description: 'Maximalt 5 filer tillåtna'
         });
+        // We only add the valid files that fit, not all of them
+        const remainingSpace = 5 - capturedFiles.length;
+        const filesToAdd = validFiles.slice(0, remainingSpace);
+        if (filesToAdd.length > 0) {
+            const updatedFiles = [...capturedFiles, ...filesToAdd];
+            setCapturedFiles(updatedFiles);
+            onCapture(updatedFiles);
+            toast.success(`${filesToAdd.length} fil(er) tillagda`);
+        }
         return;
       }
 
@@ -171,7 +192,7 @@ const SecureCameraCapture = ({ onCapture }: SecureCameraCaptureProps) => {
 
           {capturedFiles.length >= 5 && (
             <p className="text-sm text-amber-600 dark:text-amber-400 text-center">
-              Maxmalt antal filer uppnått (5/5)
+              Maximalt antal filer uppnått (5/5)
             </p>
           )}
         </div>
