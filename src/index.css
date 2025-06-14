@@ -80,10 +80,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-@layer components {
-  /* Increase logo size in header */
-  header a img {
-    @apply h-14 w-auto;
-  }
-}
