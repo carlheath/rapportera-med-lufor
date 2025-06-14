@@ -11,7 +11,6 @@ const StatsOverview = () => {
   const { data: statsData, isLoading: isLoadingStats, isError, error } = useQuery({
     queryKey: ['statsOverview'],
     queryFn: async () => {
-      console.log("Fetching stats data...");
       const totalReportsPromise = supabase
         .from('reports')
         .select('*', { count: 'exact', head: true });
@@ -45,8 +44,6 @@ const StatsOverview = () => {
         console.error("Supabase query errors:", { totalError, todayError, activeError, recentError });
         throw new Error('Failed to fetch stats data.');
       }
-      
-      console.log("Successfully fetched stats data:", { totalReports, todayReports, activeAlerts });
 
       const lastUpdate = recentActivityData && recentActivityData.length > 0 ? recentActivityData[0].created_at : null;
 
@@ -73,8 +70,6 @@ const StatsOverview = () => {
     },
     refetchInterval: 60000, // Refetch every 60 seconds
   });
-
-  console.log('StatsOverview component state:', { isLoading: isLoadingStats, isError, error, data: statsData });
 
   if (isError) {
     return (
