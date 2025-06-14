@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Zap, AlertTriangle, Menu, Bug, LogIn, Languages } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Zap, AlertTriangle, Menu, Bug, LogIn, Languages, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ReportForm from '@/components/ReportForm';
 import StatsOverview from '@/components/StatsOverview';
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
+import { Session } from '@supabase/supabase-js';
 
 // Define a type for the report data coming from the form
 interface ReportFormData {
@@ -36,6 +37,26 @@ interface ReportFormData {
 const Index = () => {
   const [showReportForm, setShowReportForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [session, setSession] = useState<Session | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.success("Du har loggats ut.");
+  };
 
   const handleReport = () => {
     setShowReportForm(true);
@@ -142,12 +163,19 @@ const Index = () => {
               </a>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link to="/login">
-                <LogIn className="mr-2 h-4 w-4" />
-                <span>Logga in</span>
-              </Link>
-            </DropdownMenuItem>
+            {session ? (
+              <DropdownMenuItem onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Logga ut</span>
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem asChild>
+                <Link to="/login">
+                  <LogIn className="mr-2 h-4 w-4" />
+                  <span>Logga in</span>
+                </Link>
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </Header>

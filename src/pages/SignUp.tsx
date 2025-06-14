@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,48 +10,33 @@ import { ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
-const Login = () => {
+const SignUp = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        navigate('/');
-      }
-    };
-    checkUser();
-    
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        navigate('/');
-      }
-    });
-
-    return () => {
-      subscription?.unsubscribe();
-    };
-  }, [navigate]);
-
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/`,
+      },
     });
-    
+
     setLoading(false);
-    
+
     if (error) {
-      toast.error('Inloggning misslyckades', { description: error.message });
+      toast.error('Fel vid registrering', { description: error.message });
     } else {
-      toast.success('Inloggning lyckades!');
-      navigate('/');
+      toast.success('Registrering lyckades!', {
+        description: 'Vänligen kolla din e-post för att bekräfta ditt konto.',
+      });
+      navigate('/login');
     }
   };
 
@@ -69,13 +54,13 @@ const Login = () => {
         <div className="w-full max-w-md">
           <Card>
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl">Logga in</CardTitle>
+              <CardTitle className="text-2xl">Skapa konto</CardTitle>
               <CardDescription>
-                Endast för behörig personal.
+                Fyll i dina uppgifter för att registrera dig.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleLogin} className="grid gap-4">
+              <form onSubmit={handleSignUp} className="grid gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="email">E-post</Label>
                   <Input 
@@ -98,13 +83,13 @@ const Login = () => {
                   />
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? 'Loggar in...' : 'Logga in'}
+                  {loading ? 'Registrerar...' : 'Skapa konto'}
                 </Button>
               </form>
               <div className="mt-4 text-center text-sm">
-                Har du inget konto?{' '}
-                <Link to="/signup" className="underline">
-                  Skapa ett konto
+                Har du redan ett konto?{' '}
+                <Link to="/login" className="underline">
+                  Logga in
                 </Link>
               </div>
             </CardContent>
@@ -115,4 +100,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;
