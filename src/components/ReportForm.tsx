@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { ArrowLeft, Camera, MapPin, Upload, Mic, Clock, Battery } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,6 +14,11 @@ import LocationCapture from './LocationCapture';
 import WeatherWidget from './WeatherWidget';
 import { reportFormSchema, type ReportFormData, type LocationData } from '@/lib/validation';
 import { sanitizeText, rateLimiter, getSessionId, getCSRFToken } from '@/lib/security';
+import StepDocument from './report/StepDocument';
+import StepLocation from './report/StepLocation';
+import StepDescription from './report/StepDescription';
+import StepDetails from './report/StepDetails';
+import StepContact from './report/StepContact';
 
 interface ReportFormProps {
   mode: 'quick' | 'detailed';
@@ -167,214 +171,52 @@ const ReportForm = ({ mode, onBack }: ReportFormProps) => {
     switch (step) {
       case 1:
         return (
-          <div className="space-y-6">
-            <div className="text-center">
-              <h3 className="text-xl font-semibold mb-2">Dokumentera Drönaren</h3>
-              <p className="text-slate-600 dark:text-slate-300">
-                Ta foton eller video av drönaren för bästa möjliga analys
-              </p>
-            </div>
-            <CameraCapture onCapture={handleMediaCapture} />
-            {mediaFiles.length > 0 && (
-              <div className="text-center">
-                <Badge variant="outline" className="text-green-700 border-green-300">
-                  {mediaFiles.length} fil(er) tillagda
-                </Badge>
-              </div>
-            )}
-          </div>
+          <StepDocument
+            mediaFiles={mediaFiles}
+            onCapture={handleMediaCapture}
+          />
         );
-
       case 2:
         return (
-          <div className="space-y-6">
-            <div className="text-center">
-              <h3 className="text-xl font-semibold mb-2">Lokalisering</h3>
-              <p className="text-slate-600 dark:text-slate-300">
-                Bekräfta din position för exakt rapportering
-              </p>
-            </div>
-            <LocationCapture onLocationCapture={handleLocationCapture} />
-            <WeatherWidget location={location} />
-          </div>
+          <StepLocation
+            location={location}
+            onLocationCapture={handleLocationCapture}
+          />
         );
-
       case 3:
         if (mode === 'quick') {
           return (
-            <div className="space-y-6">
-              <div className="text-center">
-                <h3 className="text-xl font-semibold mb-2">Snabb Beskrivning</h3>
-                <p className="text-slate-600 dark:text-slate-300">
-                  Beskriv kort vad du observerade
-                </p>
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="quickDescription">Kort beskrivning</Label>
-                  <Textarea
-                    id="quickDescription"
-                    placeholder="T.ex. 'Stor svart drönare som flög i cirkulära mönster i 5 minuter'"
-                    value={formData.description}
-                    onChange={(e) => handleInputChange('description', e.target.value)}
-                    className="min-h-[100px]"
-                  />
-                  {validationErrors.description && (
-                    <p className="text-red-600 text-sm mt-1">{validationErrors.description}</p>
-                  )}
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="urgency">Brådskande nivå</Label>
-                    <Select value={formData.urgencyLevel} onValueChange={(value) => handleInputChange('urgencyLevel', value)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="low">Låg</SelectItem>
-                        <SelectItem value="medium">Medel</SelectItem>
-                        <SelectItem value="high">Hög</SelectItem>
-                        <SelectItem value="critical">Kritisk</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="droneCount">Antal drönare</Label>
-                    <Select value={formData.numberOfDrones} onValueChange={(value) => handleInputChange('numberOfDrones', value)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1">1</SelectItem>
-                        <SelectItem value="2">2</SelectItem>
-                        <SelectItem value="3-5">3-5</SelectItem>
-                        <SelectItem value="5+">5+</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <StepDescription
+              description={formData.description}
+              onChange={(desc) => handleInputChange('description', desc)}
+              validationError={validationErrors.description}
+              quickMode
+            />
           );
         }
         return (
-          <div className="space-y-6">
-            <div className="text-center">
-              <h3 className="text-xl font-semibold mb-2">Detaljerad Beskrivning</h3>
-              <p className="text-slate-600 dark:text-slate-300">
-                Beskriv detaljerat vad du observerade
-              </p>
-            </div>
-            <div>
-              <Label htmlFor="detailedDescription">Detaljerad beskrivning</Label>
-              <Textarea
-                id="detailedDescription"
-                placeholder="Beskriv så detaljerat som möjligt vad du såg..."
-                value={formData.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
-                className="min-h-[120px]"
-              />
-              {validationErrors.description && (
-                <p className="text-red-600 text-sm mt-1">{validationErrors.description}</p>
-              )}
-            </div>
-          </div>
+          <StepDescription
+            description={formData.description}
+            onChange={(desc) => handleInputChange('description', desc)}
+            validationError={validationErrors.description}
+          />
         );
-
       case 4:
         return (
-          <div className="space-y-6">
-            <div className="text-center">
-              <h3 className="text-xl font-semibold mb-2">Detaljerad Information</h3>
-              <p className="text-slate-600 dark:text-slate-300">
-                Ytterligare detaljer för bättre analys
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="droneSize">Uppskattad storlek</Label>
-                <Select value={formData.droneSize} onValueChange={(value) => handleInputChange('droneSize', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Välj storlek" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="small">Liten (&lt; 25cm)</SelectItem>
-                    <SelectItem value="medium">Medel (25-100cm)</SelectItem>
-                    <SelectItem value="large">Stor (&gt; 100cm)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="droneColor">Färg</Label>
-                <Input
-                  id="droneColor"
-                  placeholder="T.ex. svart, vit, grå"
-                  value={formData.droneColor}
-                  onChange={(e) => handleInputChange('droneColor', e.target.value)}
-                />
-                {validationErrors.droneColor && (
-                  <p className="text-red-600 text-sm mt-1">{validationErrors.droneColor}</p>
-                )}
-              </div>
-              <div>
-                <Label htmlFor="flightPattern">Flygmönster</Label>
-                <Select value={formData.flightPattern} onValueChange={(value) => handleInputChange('flightPattern', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Välj mönster" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="hovering">Svävande</SelectItem>
-                    <SelectItem value="circular">Cirkulärt</SelectItem>
-                    <SelectItem value="linear">Rakt fram</SelectItem>
-                    <SelectItem value="erratic">Oregelbundet</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="duration">Varaktighet</Label>
-                <Select value={formData.duration} onValueChange={(value) => handleInputChange('duration', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Välj tid" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="<1min">Mindre än 1 minut</SelectItem>
-                    <SelectItem value="1-5min">1-5 minuter</SelectItem>
-                    <SelectItem value="5-15min">5-15 minuter</SelectItem>
-                    <SelectItem value="15min+">Mer än 15 minuter</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
+          <StepDetails
+            formData={formData}
+            onChange={handleInputChange}
+            validationErrors={validationErrors}
+          />
         );
-
       case 5:
         return (
-          <div className="space-y-6">
-            <div className="text-center">
-              <h3 className="text-xl font-semibold mb-2">Kontaktinformation (Valfritt)</h3>
-              <p className="text-slate-600 dark:text-slate-300">
-                För uppföljning av rapporten
-              </p>
-            </div>
-            <div>
-              <Label htmlFor="contact">E-post eller telefonnummer</Label>
-              <Input
-                id="contact"
-                placeholder="din.email@exempel.se eller 070-123 45 67"
-                value={formData.contactInfo}
-                onChange={(e) => handleInputChange('contactInfo', e.target.value)}
-              />
-              {validationErrors.contactInfo && (
-                <p className="text-red-600 text-sm mt-1">{validationErrors.contactInfo}</p>
-              )}
-              <p className="text-sm text-slate-500 mt-1">
-                Endast för uppföljning. Behandlas enligt GDPR.
-              </p>
-            </div>
-          </div>
+          <StepContact
+            contactInfo={formData.contactInfo}
+            onChange={(val) => handleInputChange('contactInfo', val)}
+            validationError={validationErrors.contactInfo}
+          />
         );
-
       default:
         return null;
     }
