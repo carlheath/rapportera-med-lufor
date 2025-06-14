@@ -276,7 +276,7 @@ const ReportForm = ({ mode, onBack, onSubmit, isSubmitting }: ReportFormProps) =
                 <Button
                   onClick={() => setStep(step + 1)}
                   disabled={
-                    (step === 1 && mediaFiles.length === 0) ||
+                    (step === 1 && mediaFiles.length === 0 && !formData.external_link_url.trim()) ||
                     (step === 2 && !location) ||
                     (step === 3 && mode === 'quick' && !formData.description.trim()) ||
                     (step === 3 && mode === 'detailed' && !formData.description.trim()) ||
