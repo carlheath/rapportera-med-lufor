@@ -13,6 +13,8 @@ import { toast } from 'sonner';
 import CameraCapture from './CameraCapture';
 import LocationCapture from './LocationCapture';
 import WeatherWidget from './WeatherWidget';
+import { reportFormSchema, type ReportFormData, type LocationData } from '@/lib/validation';
+import { sanitizeText, rateLimiter, getSessionId, getCSRFToken } from '@/lib/security';
 
 interface ReportFormProps {
   mode: 'quick' | 'detailed';
@@ -35,6 +37,7 @@ const ReportForm = ({ mode, onBack }: ReportFormProps) => {
   const [location, setLocation] = useState<{ lat: number; lng: number; accuracy: number } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [batteryLevel, setBatteryLevel] = useState<number | null>(null);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
   const maxSteps = mode === 'quick' ? 3 : 5;
 
@@ -47,11 +50,32 @@ const ReportForm = ({ mode, onBack }: ReportFormProps) => {
     }
   }, []);
 
+  const validateField = (field: string, value: string) => {
+    try {
+      const fieldSchema = reportFormSchema.shape[field as keyof typeof reportFormSchema.shape];
+      if (fieldSchema) {
+        fieldSchema.parse(value);
+        setValidationErrors(prev => ({ ...prev, [field]: '' }));
+      }
+    } catch (error: any) {
+      setValidationErrors(prev => ({ 
+        ...prev, 
+        [field]: error.errors?.[0]?.message || 'Ogiltigt värde' 
+      }));
+    }
+  };
+
   const handleInputChange = (field: string, value: string) => {
+    // Sanitize input
+    const sanitizedValue = sanitizeText(value);
+    
     setFormData(prev => ({
       ...prev,
-      [field]: value
+      [field]: sanitizedValue
     }));
+
+    // Validate field
+    validateField(field, sanitizedValue);
   };
 
   const handleMediaCapture = (files: File[]) => {
@@ -69,21 +93,53 @@ const ReportForm = ({ mode, onBack }: ReportFormProps) => {
   };
 
   const handleSubmit = async () => {
+    // Rate limiting check
+    const sessionId = getSessionId();
+    if (!rateLimiter.isAllowed(`report-${sessionId}`, 3, 300000)) { // 3 attempts per 5 minutes
+      toast.error('För många rapporter', {
+        description: 'Vänta 5 minuter innan du skickar en ny rapport.'
+      });
+      return;
+    }
+
+    // Validate form data
+    try {
+      const validatedData = reportFormSchema.parse(formData);
+      setValidationErrors({});
+    } catch (error: any) {
+      const errors: Record<string, string> = {};
+      error.errors?.forEach((err: any) => {
+        errors[err.path[0]] = err.message;
+      });
+      setValidationErrors(errors);
+      toast.error('Kontrollera formuläret', {
+        description: 'Det finns fel i formuläret som måste åtgärdas.'
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     
     try {
-      // Simulate API call
+      const csrfToken = getCSRFToken();
+      
+      // Simulate API call with security headers
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       const reportData = {
         ...formData,
+        description: sanitizeText(formData.description),
+        droneColor: sanitizeText(formData.droneColor),
+        contactInfo: sanitizeText(formData.contactInfo),
         location,
         mediaCount: mediaFiles.length,
         timestamp: new Date().toISOString(),
         batteryLevel,
         reportMode: mode,
+        csrfToken,
+        sessionId,
         deviceInfo: {
-          userAgent: navigator.userAgent,
+          userAgent: navigator.userAgent.substring(0, 200), // Limit user agent length
           language: navigator.language,
           screenResolution: `${screen.width}x${screen.height}`
         }
@@ -93,6 +149,9 @@ const ReportForm = ({ mode, onBack }: ReportFormProps) => {
       toast.success('Rapport skickad framgångsrikt!', {
         description: 'Tack för ditt bidrag till nationell säkerhet.'
       });
+      
+      // Clear session data
+      sessionStorage.removeItem('lufor-csrf-token');
       
       onBack();
     } catch (error) {
@@ -160,6 +219,9 @@ const ReportForm = ({ mode, onBack }: ReportFormProps) => {
                     onChange={(e) => handleInputChange('description', e.target.value)}
                     className="min-h-[100px]"
                   />
+                  {validationErrors.description && (
+                    <p className="text-red-600 text-sm mt-1">{validationErrors.description}</p>
+                  )}
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -212,6 +274,9 @@ const ReportForm = ({ mode, onBack }: ReportFormProps) => {
                 onChange={(e) => handleInputChange('description', e.target.value)}
                 className="min-h-[120px]"
               />
+              {validationErrors.description && (
+                <p className="text-red-600 text-sm mt-1">{validationErrors.description}</p>
+              )}
             </div>
           </div>
         );
@@ -247,6 +312,9 @@ const ReportForm = ({ mode, onBack }: ReportFormProps) => {
                   value={formData.droneColor}
                   onChange={(e) => handleInputChange('droneColor', e.target.value)}
                 />
+                {validationErrors.droneColor && (
+                  <p className="text-red-600 text-sm mt-1">{validationErrors.droneColor}</p>
+                )}
               </div>
               <div>
                 <Label htmlFor="flightPattern">Flygmönster</Label>
@@ -297,6 +365,9 @@ const ReportForm = ({ mode, onBack }: ReportFormProps) => {
                 value={formData.contactInfo}
                 onChange={(e) => handleInputChange('contactInfo', e.target.value)}
               />
+              {validationErrors.contactInfo && (
+                <p className="text-red-600 text-sm mt-1">{validationErrors.contactInfo}</p>
+              )}
               <p className="text-sm text-slate-500 mt-1">
                 Endast för uppföljning. Behandlas enligt GDPR.
               </p>
@@ -372,7 +443,10 @@ const ReportForm = ({ mode, onBack }: ReportFormProps) => {
                   onClick={() => setStep(step + 1)}
                   disabled={
                     (step === 1 && mediaFiles.length === 0) ||
-                    (step === 2 && !location)
+                    (step === 2 && !location) ||
+                    (step === 3 && mode === 'quick' && !formData.description.trim()) ||
+                    (step === 3 && mode === 'detailed' && !formData.description.trim()) ||
+                    Object.values(validationErrors).some(error => error)
                   }
                 >
                   Nästa
@@ -380,7 +454,11 @@ const ReportForm = ({ mode, onBack }: ReportFormProps) => {
               ) : (
                 <Button
                   onClick={handleSubmit}
-                  disabled={isSubmitting || !formData.description.trim()}
+                  disabled={
+                    isSubmitting || 
+                    !formData.description.trim() ||
+                    Object.values(validationErrors).some(error => error)
+                  }
                   className="bg-green-600 hover:bg-green-700"
                 >
                   {isSubmitting ? (
