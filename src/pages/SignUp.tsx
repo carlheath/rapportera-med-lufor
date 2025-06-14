@@ -9,12 +9,14 @@ import Header from '@/components/Header';
 import { ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 const SignUp = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,10 +33,10 @@ const SignUp = () => {
     setLoading(false);
 
     if (error) {
-      toast.error('Fel vid registrering', { description: error.message });
+      toast.error(t('signUpPage.signUpError'), { description: error.message });
     } else {
-      toast.success('Registrering lyckades!', {
-        description: 'Vänligen kolla din e-post för att bekräfta ditt konto.',
+      toast.success(t('signUpPage.signUpSuccess'), {
+        description: t('signUpPage.signUpSuccessDescription'),
       });
       navigate('/login');
     }
@@ -46,7 +48,7 @@ const SignUp = () => {
         <Button asChild variant="outline">
           <Link to="/" className="flex items-center">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Tillbaka
+            {t('common.back')}
           </Link>
         </Button>
       </Header>
@@ -54,26 +56,26 @@ const SignUp = () => {
         <div className="w-full max-w-md">
           <Card>
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl">Skapa konto</CardTitle>
+              <CardTitle className="text-2xl">{t('signUpPage.title')}</CardTitle>
               <CardDescription>
-                Fyll i dina uppgifter för att registrera dig.
+                {t('signUpPage.description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSignUp} className="grid gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="email">E-post</Label>
+                  <Label htmlFor="email">{t('signUpPage.emailLabel')}</Label>
                   <Input 
                     id="email" 
                     type="email" 
-                    placeholder="namn@exempel.com" 
+                    placeholder={t('signUpPage.emailPlaceholder')} 
                     required 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="password">Lösenord</Label>
+                  <Label htmlFor="password">{t('signUpPage.passwordLabel')}</Label>
                   <Input 
                     id="password" 
                     type="password" 
@@ -83,13 +85,13 @@ const SignUp = () => {
                   />
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? 'Registrerar...' : 'Skapa konto'}
+                  {loading ? t('signUpPage.submitButtonLoading') : t('signUpPage.submitButton')}
                 </Button>
               </form>
               <div className="mt-4 text-center text-sm">
-                Har du redan ett konto?{' '}
+                {t('signUpPage.hasAccount')}{' '}
                 <Link to="/login" className="underline">
-                  Logga in
+                  {t('signUpPage.loginLink')}
                 </Link>
               </div>
             </CardContent>

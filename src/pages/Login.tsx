@@ -9,12 +9,14 @@ import Header from '@/components/Header';
 import { ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const checkUser = async () => {
@@ -48,9 +50,9 @@ const Login = () => {
     setLoading(false);
     
     if (error) {
-      toast.error('Inloggning misslyckades', { description: error.message });
+      toast.error(t('loginPage.loginFailed'), { description: error.message });
     } else {
-      toast.success('Inloggning lyckades!');
+      toast.success(t('loginPage.loginSuccess'));
       navigate('/');
     }
   };
@@ -61,7 +63,7 @@ const Login = () => {
         <Button asChild variant="outline">
           <Link to="/" className="flex items-center">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Tillbaka
+            {t('common.back')}
           </Link>
         </Button>
       </Header>
@@ -69,26 +71,26 @@ const Login = () => {
         <div className="w-full max-w-md">
           <Card>
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl">Logga in</CardTitle>
+              <CardTitle className="text-2xl">{t('loginPage.title')}</CardTitle>
               <CardDescription>
-                Endast för behörig personal.
+                {t('loginPage.description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleLogin} className="grid gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="email">E-post</Label>
+                  <Label htmlFor="email">{t('loginPage.emailLabel')}</Label>
                   <Input 
                     id="email" 
                     type="email" 
-                    placeholder="namn@exempel.com" 
+                    placeholder={t('loginPage.emailPlaceholder')} 
                     required 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="password">Lösenord</Label>
+                  <Label htmlFor="password">{t('loginPage.passwordLabel')}</Label>
                   <Input 
                     id="password" 
                     type="password" 
@@ -98,13 +100,13 @@ const Login = () => {
                   />
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? 'Loggar in...' : 'Logga in'}
+                  {loading ? t('loginPage.submitButtonLoading') : t('loginPage.submitButton')}
                 </Button>
               </form>
               <div className="mt-4 text-center text-sm">
-                Har du inget konto?{' '}
+                {t('loginPage.noAccount')}{' '}
                 <Link to="/signup" className="underline">
-                  Skapa ett konto
+                  {t('loginPage.signUpLink')}
                 </Link>
               </div>
             </CardContent>

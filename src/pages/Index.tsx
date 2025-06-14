@@ -15,6 +15,7 @@ import {
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import { Session } from '@supabase/supabase-js';
+import { useTranslation } from 'react-i18next';
 
 // Define a type for the report data coming from the form
 interface ReportFormData {
@@ -38,6 +39,7 @@ const Index = () => {
   const [showReportForm, setShowReportForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -55,7 +57,7 @@ const Index = () => {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    toast.success("Du har loggats ut.");
+    toast.success(t('toasts.loggedOut'));
   };
 
   const handleReport = () => {
@@ -100,8 +102,8 @@ const Index = () => {
 
     // Validate required fields
     if (!reportToInsert.latitude || !reportToInsert.longitude) {
-      toast.error("Fel vid rapportering", {
-        description: "Platsinformation (latitud och longitud) är obligatorisk.",
+      toast.error(t('toasts.reportError'), {
+        description: t('toasts.reportErrorLocationMissing'),
         icon: <AlertTriangle className="w-4 h-4" />,
       });
       setIsSubmitting(false);
@@ -114,13 +116,13 @@ const Index = () => {
 
     if (error) {
       console.error("Error inserting report:", error);
-      toast.error("Fel vid rapportering", {
-        description: `Ett fel uppstod: ${error.message}. Försök igen.`,
+      toast.error(t('toasts.reportError'), {
+        description: t('toasts.genericError', { message: error.message }),
         icon: <AlertTriangle className="w-4 h-4" />,
       });
     } else {
-      toast.success("Rapport skickad!", {
-        description: "Tack för din observation. Din rapport har tagits emot.",
+      toast.success(t('toasts.reportSuccess'), {
+        description: t('toasts.reportSuccessDescription'),
       });
       setShowReportForm(false); // Close the form on successful submission
     }
@@ -150,29 +152,29 @@ const Index = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuItem asChild>
-              <Link to="/about">Om LUFOR</Link>
+              <Link to="/about">{t('header.about')}</Link>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => toast.info('Funktion för språkbyte kommer snart.')}>
+            <DropdownMenuItem onClick={() => i18n.changeLanguage(i18n.language === 'sv' ? 'en' : 'sv')}>
               <Languages className="mr-2 h-4 w-4" />
-              <span>Byt språk (Engelska)</span>
+              <span>{t('header.switchLanguage')}</span>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <a href="mailto:bugg@lufor.se?subject=Buggrapport LUFOR" className="w-full flex items-center">
                 <Bug className="mr-2 h-4 w-4" />
-                <span>Rapportera en bugg</span>
+                <span>{t('header.reportBug')}</span>
               </a>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             {session ? (
               <DropdownMenuItem onClick={handleLogout}>
                 <LogOut className="mr-2 h-4 w-4" />
-                <span>Logga ut</span>
+                <span>{t('header.logout')}</span>
               </DropdownMenuItem>
             ) : (
               <DropdownMenuItem asChild>
                 <Link to="/login">
                   <LogIn className="mr-2 h-4 w-4" />
-                  <span>Logga in</span>
+                  <span>{t('header.login')}</span>
                 </Link>
               </DropdownMenuItem>
             )}
@@ -184,10 +186,10 @@ const Index = () => {
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            Observerat en drönare?
+            {t('indexPage.heroTitle')}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Din rapport hjälper till att trygga Sveriges luftrum. Tillsammans skapar vi en säkrare nationell beredskap.
+            {t('indexPage.heroSubtitle')}
           </p>
         </div>
         
@@ -202,7 +204,7 @@ const Index = () => {
               aria-label="Rapportera drönare"
             >
               <Zap className="w-6 h-6 mr-3" />
-              Rapportera drönare
+              {t('indexPage.reportButton')}
             </Button>
         </div>
         
@@ -224,7 +226,7 @@ const Index = () => {
           aria-label="Rapportera drönare"
         >
           <Zap className="w-6 h-6 mr-3" />
-          Rapportera drönare
+          {t('indexPage.reportButton')}
         </Button>
       </div>
 
