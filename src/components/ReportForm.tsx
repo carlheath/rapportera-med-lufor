@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Camera, MapPin, Upload, Mic, Clock, Battery } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowLeft, Battery } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -13,12 +13,13 @@ import CameraCapture from './CameraCapture';
 import LocationCapture from './LocationCapture';
 import WeatherWidget from './WeatherWidget';
 import { reportFormSchema } from '@/lib/validation';
-import { sanitizeText, rateLimiter, getSessionId, getCSRFToken } from '@/lib/security';
+import { sanitizeText, rateLimiter, getSessionId } from '@/lib/security';
 import StepDocument from './report/StepDocument';
 import StepLocation from './report/StepLocation';
 import StepDescription from './report/StepDescription';
 import StepDetails from './report/StepDetails';
 import StepContact from './report/StepContact';
+import { useTranslation } from 'react-i18next';
 
 interface ReportFormProps {
   mode: 'quick' | 'detailed';
@@ -28,6 +29,7 @@ interface ReportFormProps {
 }
 
 const ReportForm = ({ mode, onBack, onSubmit, isSubmitting }: ReportFormProps) => {
+  const { t } = useTranslation();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     description: '',
@@ -65,7 +67,7 @@ const ReportForm = ({ mode, onBack, onSubmit, isSubmitting }: ReportFormProps) =
     } catch (error: any) {
       setValidationErrors(prev => ({ 
         ...prev, 
-        [field]: error.errors?.[0]?.message || 'Ogiltigt värde' 
+        [field]: error.errors?.[0]?.message || t('reportForm.invalidValue')
       }));
     }
   };
@@ -101,8 +103,8 @@ const ReportForm = ({ mode, onBack, onSubmit, isSubmitting }: ReportFormProps) =
     // Rate limiting check
     const sessionId = getSessionId();
     if (!rateLimiter.isAllowed(`report-${sessionId}`, 3, 300000)) { // 3 attempts per 5 minutes
-      toast.error('För många rapporter', {
-        description: 'Vänta 5 minuter innan du skickar en ny rapport.'
+      toast.error(t('reportForm.rateLimitErrorTitle'), {
+        description: t('reportForm.rateLimitErrorDescription')
       });
       return;
     }
@@ -117,8 +119,8 @@ const ReportForm = ({ mode, onBack, onSubmit, isSubmitting }: ReportFormProps) =
         errors[err.path[0]] = err.message;
       });
       setValidationErrors(errors);
-      toast.error('Kontrollera formuläret', {
-        description: 'Det finns fel i formuläret som måste åtgärdas.'
+      toast.error(t('reportForm.validationErrorTitle'), {
+        description: t('reportForm.validationErrorDescription')
       });
       return;
     }
@@ -207,11 +209,11 @@ const ReportForm = ({ mode, onBack, onSubmit, isSubmitting }: ReportFormProps) =
               className="text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Tillbaka
+              {t('common.back')}
             </Button>
             <div className="flex items-center space-x-4">
               <Badge variant={mode === 'quick' ? 'default' : 'secondary'}>
-                {mode === 'quick' ? 'Snabbrapport' : 'Detaljerad rapport'}
+                {mode === 'quick' ? t('reportForm.quickReport') : t('reportForm.detailedReport')}
               </Badge>
               {batteryLevel && (
                 <div className="flex items-center space-x-1 text-sm text-slate-600 dark:text-slate-300">
@@ -229,10 +231,10 @@ const ReportForm = ({ mode, onBack, onSubmit, isSubmitting }: ReportFormProps) =
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
-              Steg {step} av {maxSteps}
+              {t('reportForm.step', { step, maxSteps })}
             </span>
             <span className="text-sm text-slate-500 dark:text-slate-400">
-              {Math.round((step / maxSteps) * 100)}% klart
+              {t('reportForm.progress', { progress: Math.round((step / maxSteps) * 100) })}
             </span>
           </div>
           <Progress value={(step / maxSteps) * 100} className="h-2" />
@@ -249,7 +251,7 @@ const ReportForm = ({ mode, onBack, onSubmit, isSubmitting }: ReportFormProps) =
                 onClick={() => setStep(Math.max(1, step - 1))}
                 disabled={step === 1}
               >
-                Föregående
+                {t('reportForm.previous')}
               </Button>
               
               {step < maxSteps ? (
@@ -263,7 +265,7 @@ const ReportForm = ({ mode, onBack, onSubmit, isSubmitting }: ReportFormProps) =
                     Object.values(validationErrors).some(error => error)
                   }
                 >
-                  Nästa
+                  {t('reportForm.next')}
                 </Button>
               ) : (
                 <Button
@@ -278,10 +280,10 @@ const ReportForm = ({ mode, onBack, onSubmit, isSubmitting }: ReportFormProps) =
                   {isSubmitting ? (
                     <>
                       <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2" />
-                      Skickar...
+                      {t('reportForm.submitting')}
                     </>
                   ) : (
-                    'Skicka Rapport'
+                    t('reportForm.submit')
                   )}
                 </Button>
               )}

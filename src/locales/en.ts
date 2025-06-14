@@ -1,4 +1,3 @@
-
 const en = {
   header: {
     about: "About LUFOR",
@@ -57,6 +56,65 @@ const en = {
   },
   common: {
     back: "Back"
+  },
+  reportForm: {
+    quickReport: 'Quick Report',
+    detailedReport: 'Detailed Report',
+    step: 'Step {{step}} of {{maxSteps}}',
+    progress: '{{progress}}% complete',
+    previous: 'Previous',
+    next: 'Next',
+    submit: 'Submit Report',
+    submitting: 'Submitting...',
+    rateLimitErrorTitle: 'Too many reports',
+    rateLimitErrorDescription: 'Please wait 5 minutes before submitting another report.',
+    validationErrorTitle: 'Please check the form',
+    validationErrorDescription: 'There are errors in the form that need to be corrected.',
+    invalidValue: 'Invalid value',
+    
+    documentTitle: 'Document the Drone',
+    documentSubtitle: 'Take photos or video of the drone for the best possible analysis',
+    filesAdded: '{{count}} file(s) added',
+    
+    locationTitle: 'Location',
+    locationSubtitle: 'Confirm your position for accurate reporting',
+    
+    quickDescriptionTitle: 'Quick Description',
+    detailedDescriptionTitle: 'Detailed Description',
+    quickDescriptionSubtitle: 'Briefly describe what you observed',
+    detailedDescriptionSubtitle: 'Describe in detail what you observed',
+    quickDescriptionLabel: 'Brief description',
+    detailedDescriptionLabel: 'Detailed description',
+    quickDescriptionPlaceholder: "E.g., 'Large black drone flying in circular patterns for 5 minutes'",
+    detailedDescriptionPlaceholder: "Describe what you saw in as much detail as possible...",
+    
+    detailsTitle: 'Detailed Information',
+    detailsSubtitle: 'Additional details for better analysis',
+    sizeLabel: 'Estimated size',
+    sizePlaceholder: 'Select size',
+    sizeSmall: 'Small (< 25cm)',
+    sizeMedium: 'Medium (25-100cm)',
+    sizeLarge: 'Large (> 100cm)',
+    colorLabel: 'Color',
+    colorPlaceholder: 'E.g., black, white, gray',
+    flightPatternLabel: 'Flight pattern',
+    flightPatternPlaceholder: 'Select pattern',
+    patternHovering: 'Hovering',
+    patternCircular: 'Circular',
+    patternLinear: 'Straight ahead',
+    patternErratic: 'Erratic',
+    durationLabel: 'Duration',
+    durationPlaceholder: 'Select time',
+    durationLt1m: 'Less than 1 minute',
+    duration1to5m: '1-5 minutes',
+    duration5to15m: '5-15 minutes',
+    durationGt15m: 'More than 15 minutes',
+    
+    contactTitle: 'Contact Information (Optional)',
+    contactSubtitle: 'For follow-up on the report',
+    contactLabel: 'Email or phone number',
+    contactPlaceholder: 'your.email@example.com or 070-123 45 67',
+    contactGdpr: 'For follow-up only. Processed according to GDPR.',
   }
 };
 export default en;
