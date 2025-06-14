@@ -1,12 +1,18 @@
-
 import { useState } from 'react';
-import { Camera, Zap, AlertTriangle } from 'lucide-react';
+import { Camera, Zap, AlertTriangle, Menu, Bug, LogIn, Language } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import ReportForm from '@/components/ReportForm';
 import StatsOverview from '@/components/StatsOverview';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Link } from 'react-router-dom';
 
 // Define a type for the report data coming from the form
 interface ReportFormData {
@@ -130,9 +136,35 @@ const Index = () => {
                 </p>
               </div>
             </div>
-            <Badge variant="accent">
-              Aktiv
-            </Badge>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" aria-label="Öppna meny">
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem asChild>
+                  <Link to="/about">Om LUFOR</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => toast.info('Funktion för språkbyte kommer snart.')}>
+                  <Language className="mr-2 h-4 w-4" />
+                  <span>Byt språk (Engelska)</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <a href="mailto:bugg@lufor.se?subject=Buggrapport LUFOR" className="w-full flex items-center">
+                    <Bug className="mr-2 h-4 w-4" />
+                    <span>Rapportera en bugg</span>
+                  </a>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/login">
+                    <LogIn className="mr-2 h-4 w-4" />
+                    <span>Logga in</span>
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>
