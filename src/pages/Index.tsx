@@ -112,25 +112,25 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-blue-200 dark:border-slate-700 sticky top-0 z-40">
+      <header className="bg-background/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Camera className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                <Camera className="w-6 h-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-slate-900 dark:text-white">
+                <h1 className="text-xl font-bold text-foreground">
                   LUFOR
                 </h1>
-                <p className="text-sm text-slate-600 dark:text-slate-300">
+                <p className="text-sm text-muted-foreground">
                   Observation och rapportering av luftfarkoster
                 </p>
               </div>
             </div>
-            <Badge variant="outline" className="text-green-700 border-green-300 bg-green-50 dark:text-green-400 dark:border-green-600 dark:bg-green-900/20">
+            <Badge variant="accent">
               Aktiv
             </Badge>
           </div>
@@ -140,10 +140,10 @@ const Index = () => {
       <main className="container mx-auto px-4 py-8 pb-32 sm:pb-12">
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
             Observerat en drönare?
           </h2>
-          <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Din rapport hjälper till att trygga Sveriges luftrum. Tillsammans skapar vi en säkrare nationell beredskap.
           </p>
         </div>
@@ -152,8 +152,9 @@ const Index = () => {
         <div className="hidden sm:flex justify-center my-8">
            <Button 
               onClick={handleReport}
+              variant="destructive"
               size="lg"
-              className="bg-red-600 hover:bg-red-700 text-white font-bold px-12 py-6 text-xl h-auto shadow-lg"
+              className="font-bold px-12 py-6 text-xl h-auto shadow-lg"
               disabled={isSubmitting}
               aria-label="Rapportera drönare"
             >
@@ -170,11 +171,12 @@ const Index = () => {
       </main>
 
       {/* Sticky Report Button on Mobile */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-t border-slate-200 dark:border-slate-700 sm:hidden">
+      <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-background/80 backdrop-blur-sm border-t border-border sm:hidden">
         <Button 
           onClick={handleReport}
+          variant="destructive"
           size="lg"
-          className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-5 text-lg h-auto shadow-lg"
+          className="w-full font-bold py-5 text-lg h-auto shadow-lg"
           disabled={isSubmitting}
           aria-label="Rapportera drönare"
         >
