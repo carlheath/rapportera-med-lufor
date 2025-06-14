@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { MapPin, Camera, Clock, Zap } from 'lucide-react';
+import { MapPin, Camera, Clock, Zap, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -44,10 +44,10 @@ const Index = () => {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-slate-900 dark:text-white">
-                  Drönare Observationssystem
+                  LUFOR
                 </h1>
                 <p className="text-sm text-slate-600 dark:text-slate-300">
-                  Sveriges nationella beredskapsrapportering
+                  Luftrums- och Flygfarkost Observationsrapportering
                 </p>
               </div>
             </div>
@@ -62,10 +62,10 @@ const Index = () => {
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-slate-900 dark:text-white mb-4">
-            Rapportera Drönare Observationer
+            Rapportera Flygfarkost Observationer
           </h2>
           <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-8">
-            Hjälp till att övervaka Sveriges luftrum genom att rapportera oidentifierade drönare. 
+            Hjälp till att övervaka Sveriges luftrum genom att rapportera oidentifierade flygfarkoster. 
             Din observation bidrar till nationell säkerhet och beredskap.
           </p>
           
@@ -91,6 +91,26 @@ const Index = () => {
           </div>
         </div>
 
+        {/* About System Section */}
+        <div className="mb-12">
+          <Card className="border-blue-200 dark:border-slate-700 bg-blue-50/50 dark:bg-blue-900/10">
+            <CardHeader>
+              <CardTitle className="flex items-center text-blue-900 dark:text-blue-300">
+                <Info className="w-5 h-5 mr-2" />
+                Om LUFOR-systemet
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CardDescription className="text-slate-700 dark:text-slate-300 text-base leading-relaxed">
+                LUFOR (Luftrums- och Flygfarkost Observationsrapportering) genomförs inom ramen för 
+                initiativet <strong>Samarbete för Hybrid Innovation inom Totalförsvaret (SHIFT)</strong>. 
+                Systemet utvecklas för att stärka Sveriges förmåga att upptäcka och rapportera oidentifierade 
+                flygfarkoster genom medborgarnas observationer, vilket bidrar till nationell säkerhet och beredskap.
+              </CardDescription>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Stats Overview */}
         <StatsOverview />
 
@@ -105,7 +125,7 @@ const Index = () => {
             </CardHeader>
             <CardContent>
               <CardDescription className="text-slate-600 dark:text-slate-300">
-                Ta foton och videor av drönaren. Systemet samlar automatiskt in GPS-position och tidsstämplar.
+                Ta foton och videor av flygfarkosten. Systemet samlar automatiskt in GPS-position och tidsstämplar.
               </CardDescription>
             </CardContent>
           </Card>
@@ -133,7 +153,7 @@ const Index = () => {
             </CardHeader>
             <CardContent>
               <CardDescription className="text-slate-600 dark:text-slate-300">
-                AI-driven analys klassificerar drönaren och korrelerar med andra rapporter för hotbedömning.
+                AI-driven analys klassificerar flygfarkosten och korrelerar med andra rapporter för hotbedömning.
               </CardDescription>
             </CardContent>
           </Card>
@@ -145,7 +165,7 @@ const Index = () => {
             Viktigt att veta
           </h3>
           <ul className="text-amber-800 dark:text-amber-200 space-y-1 text-sm">
-            <li>• Rapportera endast oidentifierade eller misstänkta drönare</li>
+            <li>• Rapportera endast oidentifierade eller misstänkta flygfarkoster</li>
             <li>• All data behandlas enligt GDPR och svenska integritetslagar</li>
             <li>• Vid akut hot, kontakta omedelbart 112</li>
             <li>• Dina rapporter bidrar till nationell säkerhetsanalys</li>

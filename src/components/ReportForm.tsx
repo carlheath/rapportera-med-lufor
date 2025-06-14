@@ -110,9 +110,9 @@ const ReportForm = ({ mode, onBack }: ReportFormProps) => {
         return (
           <div className="space-y-6">
             <div className="text-center">
-              <h3 className="text-xl font-semibold mb-2">Dokumentera Drönaren</h3>
+              <h3 className="text-xl font-semibold mb-2">Dokumentera Flygfarkosten</h3>
               <p className="text-slate-600 dark:text-slate-300">
-                Ta foton eller video av drönaren för bästa möjliga analys
+                Ta foton eller video av flygfarkosten för bästa möjliga analys
               </p>
             </div>
             <CameraCapture onCapture={handleMediaCapture} />
@@ -155,7 +155,7 @@ const ReportForm = ({ mode, onBack }: ReportFormProps) => {
                   <Label htmlFor="quickDescription">Kort beskrivning</Label>
                   <Textarea
                     id="quickDescription"
-                    placeholder="T.ex. 'Stor svart drönare som flög i cirkulära mönster i 5 minuter'"
+                    placeholder="T.ex. 'Stor svart flygfarkost som flög i cirkulära mönster i 5 minuter'"
                     value={formData.description}
                     onChange={(e) => handleInputChange('description', e.target.value)}
                     className="min-h-[100px]"
@@ -177,7 +177,7 @@ const ReportForm = ({ mode, onBack }: ReportFormProps) => {
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="droneCount">Antal drönare</Label>
+                    <Label htmlFor="droneCount">Antal flygfarkoster</Label>
                     <Select value={formData.numberOfDrones} onValueChange={(value) => handleInputChange('numberOfDrones', value)}>
                       <SelectTrigger>
                         <SelectValue />
