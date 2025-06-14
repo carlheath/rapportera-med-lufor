@@ -30,6 +30,7 @@ interface ReportFormData {
   numberOfDrones: string;
   contactInfo: string;
   urgencyLevel: string;
+  external_link_url: string;
   batteryLevel: number | null;
   reportMode: 'quick' | 'detailed';
   deviceInfo: any;

@@ -17,6 +17,7 @@ interface ReportFormData {
   numberOfDrones: string;
   contactInfo: string;
   urgencyLevel: string;
+  external_link_url: string;
   batteryLevel: number | null;
   reportMode: 'quick' | 'detailed';
   deviceInfo: any;
@@ -50,6 +51,7 @@ export const submitReport = async (formData: ReportFormData, t: TFunction) => {
     contact_info: { contact: formData.contactInfo },
     weather_data: null, // Placeholder for now
     raw_form_data: formData,
+    external_link_url: formData.external_link_url || null,
   };
 
   console.log("Data to insert into Supabase:", reportToInsert);

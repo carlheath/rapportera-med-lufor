@@ -2,13 +2,18 @@
 import { Badge } from '@/components/ui/badge';
 import CameraCapture from '../CameraCapture';
 import { useTranslation } from 'react-i18next';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface StepDocumentProps {
   mediaFiles: File[];
   onCapture: (files: File[]) => void;
+  externalLink: string;
+  onLinkChange: (value: string) => void;
+  validationError?: string;
 }
 
-const StepDocument = ({ mediaFiles, onCapture }: StepDocumentProps) => {
+const StepDocument = ({ mediaFiles, onCapture, externalLink, onLinkChange, validationError }: StepDocumentProps) => {
   const { t } = useTranslation();
   return (
     <div className="space-y-6">
@@ -26,6 +31,28 @@ const StepDocument = ({ mediaFiles, onCapture }: StepDocumentProps) => {
           </Badge>
         </div>
       )}
+      <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-white/50 dark:bg-slate-900/50 px-2 text-muted-foreground">{t('common.or')}</span>
+        </div>
+      </div>
+      <div>
+        <Label htmlFor="external-link">{t('reportForm.externalLink')}</Label>
+        <Input
+          id="external-link"
+          placeholder="https://youtube.com/watch?v=..."
+          value={externalLink}
+          onChange={(e) => onLinkChange(e.target.value)}
+          className="mt-1"
+        />
+        {validationError && (
+          <p className="text-red-600 text-sm mt-1">{validationError}</p>
+        )}
+         <p className="text-sm text-muted-foreground mt-2">{t('reportForm.externalLinkDescription')}</p>
+      </div>
     </div>
   );
 };

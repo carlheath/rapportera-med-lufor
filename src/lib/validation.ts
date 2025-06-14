@@ -25,7 +25,9 @@ export const reportFormSchema = z.object({
     .refine(val => !/<script|javascript:|vbscript:|on\w+=/i.test(val), 'Otillåten kod upptäckt')
     .optional(),
   
-  urgencyLevel: z.enum(['low', 'medium', 'high', 'critical'])
+  urgencyLevel: z.enum(['low', 'medium', 'high', 'critical']),
+
+  external_link_url: z.string().url("Ange en giltig webbadress.").optional().or(z.literal('')),
 });
 
 // Location validation

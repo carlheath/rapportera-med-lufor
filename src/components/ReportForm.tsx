@@ -39,7 +39,8 @@ const ReportForm = ({ mode, onBack, onSubmit, isSubmitting }: ReportFormProps) =
     duration: '',
     numberOfDrones: '1',
     contactInfo: '',
-    urgencyLevel: 'low'
+    urgencyLevel: 'low',
+    external_link_url: '',
   });
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
   const [location, setLocation] = useState<{ lat: number; lng: number; accuracy: number } | null>(null);
@@ -163,6 +164,9 @@ const ReportForm = ({ mode, onBack, onSubmit, isSubmitting }: ReportFormProps) =
           <StepDocument
             mediaFiles={mediaFiles}
             onCapture={handleMediaCapture}
+            externalLink={formData.external_link_url}
+            onLinkChange={(value) => handleInputChange('external_link_url', value)}
+            validationError={validationErrors.external_link_url}
           />
         );
       case 2:
