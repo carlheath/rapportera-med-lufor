@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { MapPin, Camera, Clock, Zap, Info, AlertTriangle } from 'lucide-react';
+import { Camera, Zap, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import ReportForm from '@/components/ReportForm';
 import StatsOverview from '@/components/StatsOverview';
@@ -28,16 +27,9 @@ interface ReportFormData {
 
 const Index = () => {
   const [showReportForm, setShowReportForm] = useState(false);
-  const [reportMode, setReportMode] = useState<'quick' | 'detailed'>('quick');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleQuickReport = () => {
-    setReportMode('quick');
-    setShowReportForm(true);
-  };
-
-  const handleDetailedReport = () => {
-    setReportMode('detailed');
+  const handleReport = () => {
     setShowReportForm(true);
   };
 
@@ -60,7 +52,7 @@ const Index = () => {
     };
 
     const reportToInsert = {
-      report_mode: reportMode,
+      report_mode: formData.reportMode,
       latitude: formData.location?.lat,
       longitude: formData.location?.lng,
       accuracy: formData.location?.accuracy,
@@ -109,10 +101,10 @@ const Index = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
         <ReportForm 
-          mode={reportMode} 
+          mode="detailed"
           onBack={() => setShowReportForm(false)}
           onSubmit={handleReportSubmit}
-          isSubmitting={isSubmitting} // Pass submitting state to ReportForm
+          isSubmitting={isSubmitting}
         />
       </div>
     );
@@ -133,7 +125,7 @@ const Index = () => {
                   LUFOR
                 </h1>
                 <p className="text-sm text-slate-600 dark:text-slate-300">
-                  en app för luftrums- och flygfarkostobservation och rapportering
+                  Observation och rapportering av luftfarkoster
                 </p>
               </div>
             </div>
@@ -144,122 +136,52 @@ const Index = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 pb-32 sm:pb-12">
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-slate-900 dark:text-white mb-4">
-            Rapportera en drönare
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
+            Observerat en drönare?
           </h2>
-          <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-8">
-            Hjälp till att övervaka Sveriges luftrum genom att rapportera oidentifierade drönare. 
-            Din observation bidrar till nationell säkerhet och beredskap.
+          <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+            Din rapport hjälper till att trygga Sveriges luftrum. Tillsammans skapar vi en säkrare nationell beredskap.
           </p>
-          
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button 
-              onClick={handleQuickReport}
-              size="lg"
-              className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 text-lg h-auto"
-              disabled={isSubmitting}
-            >
-              <Zap className="w-5 h-5 mr-2" />
-              Snabbrapport (30 sek)
-            </Button>
-            <Button 
-              onClick={handleDetailedReport}
-              variant="outline"
-              size="lg"
-              className="border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 px-8 py-4 text-lg h-auto"
-              disabled={isSubmitting}
-            >
-              <Clock className="w-5 h-5 mr-2" />
-              Detaljerad Rapport
-            </Button>
-          </div>
         </div>
-
-        {/* About System Section */}
-        <div className="mb-12">
-          <Card className="border-blue-200 dark:border-slate-700 bg-blue-50/50 dark:bg-blue-900/10">
-            <CardHeader>
-              <CardTitle className="flex items-center text-blue-900 dark:text-blue-300">
-                <Info className="w-5 h-5 mr-2" />
-                Om LUFOR-systemet
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription className="text-slate-700 dark:text-slate-300 text-base leading-relaxed">
-                LUFOR (Luftrums- och Flygfarkost Observationsrapportering) genomförs inom ramen för 
-                initiativet <strong>Samarbete för Hybrid Innovation inom Totalförsvaret (SHIFT)</strong>. 
-                Systemet utvecklas för att stärka Sveriges förmåga att upptäcka och rapportera oidentifierade 
-                drönare genom medborgarnas observationer, vilket bidrar till nationell säkerhet och beredskap. Nu med datalagring i Supabase!
-              </CardDescription>
-            </CardContent>
-          </Card>
+        
+        {/* Stats and Activity Section */}
+        <div className="max-w-4xl mx-auto">
+          <StatsOverview />
         </div>
-
-        {/* Stats Overview */}
-        <StatsOverview />
-
-        {/* Information Cards */}
-        <div className="grid md:grid-cols-3 gap-6 mt-12">
-          <Card className="border-blue-200 dark:border-slate-700">
-            <CardHeader>
-              <CardTitle className="flex items-center text-blue-900 dark:text-blue-300">
-                <Camera className="w-5 h-5 mr-2" />
-                Dokumentera
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription className="text-slate-600 dark:text-slate-300">
-                Ta foton och videor av drönaren. Systemet samlar automatiskt in GPS-position och tidsstämplar.
-              </CardDescription>
-            </CardContent>
-          </Card>
-
-          <Card className="border-blue-200 dark:border-slate-700">
-            <CardHeader>
-              <CardTitle className="flex items-center text-blue-900 dark:text-blue-300">
-                <MapPin className="w-5 h-5 mr-2" />
-                Lokalisera
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription className="text-slate-600 dark:text-slate-300">
-                Exakt GPS-koordinater och väderdata samlas in automatiskt för precis positionering.
-              </CardDescription>
-            </CardContent>
-          </Card>
-
-          <Card className="border-blue-200 dark:border-slate-700">
-            <CardHeader>
-              <CardTitle className="flex items-center text-blue-900 dark:text-blue-300">
-                <Zap className="w-5 h-5 mr-2" />
-                Analysera
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription className="text-slate-600 dark:text-slate-300">
-                AI-driven analys klassificerar drönaren och korrelerar med andra rapporter för hotbedömning.
-              </CardDescription>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Important Notice */}
-        <div className="mt-12 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-6">
-          <h3 className="font-semibold text-amber-900 dark:text-amber-300 mb-2">
-            Viktigt att veta
-          </h3>
-          <ul className="text-amber-800 dark:text-amber-200 space-y-1 text-sm">
-            <li>• Rapportera endast oidentifierade eller misstänkta drönare</li>
-            <li>• All data behandlas enligt GDPR och svenska integritetslagar</li>
-            <li>• Vid akut hot, kontakta omedelbart 112</li>
-            <li>• Dina rapporter bidrar till nationell säkerhetsanalys</li>
-          </ul>
-        </div>
+        
       </main>
+
+      {/* Sticky Report Button on Mobile */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-t border-slate-200 dark:border-slate-700 sm:hidden">
+        <Button 
+          onClick={handleReport}
+          size="lg"
+          className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-5 text-lg h-auto shadow-lg"
+          disabled={isSubmitting}
+          aria-label="Rapportera drönare"
+        >
+          <Zap className="w-6 h-6 mr-3" />
+          Rapportera drönare
+        </Button>
+      </div>
+
+      {/* Static Report Button on Desktop */}
+      <div className="hidden sm:flex justify-center my-8">
+         <Button 
+            onClick={handleReport}
+            size="lg"
+            className="bg-red-600 hover:bg-red-700 text-white font-bold px-12 py-6 text-xl h-auto shadow-lg"
+            disabled={isSubmitting}
+            aria-label="Rapportera drönare"
+          >
+            <Zap className="w-6 h-6 mr-3" />
+            Rapportera drönare
+          </Button>
+      </div>
+
     </div>
   );
 };

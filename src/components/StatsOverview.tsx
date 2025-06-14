@@ -1,6 +1,6 @@
 
 import { TrendingUp, MapPin, Clock, AlertTriangle } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
 const StatsOverview = () => {
@@ -45,80 +45,16 @@ const StatsOverview = () => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="border-blue-200 dark:border-slate-700">
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <TrendingUp className="w-5 h-5 text-blue-600" />
-              <div>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                  {stats.totalReports.toLocaleString()}
-                </p>
-                <p className="text-xs text-slate-600 dark:text-slate-300">
-                  Totala rapporter
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-blue-200 dark:border-slate-700">
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Clock className="w-5 h-5 text-green-600" />
-              <div>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                  {stats.todayReports}
-                </p>
-                <p className="text-xs text-slate-600 dark:text-slate-300">
-                  Idag
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-blue-200 dark:border-slate-700">
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <AlertTriangle className="w-5 h-5 text-red-600" />
-              <div>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                  {stats.activeAlerts}
-                </p>
-                <p className="text-xs text-slate-600 dark:text-slate-300">
-                  Aktiva varningar
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-blue-200 dark:border-slate-700">
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <MapPin className="w-5 h-5 text-purple-600" />
-              <div>
-                <p className="text-sm font-bold text-slate-900 dark:text-white">
-                  {stats.lastUpdate}
-                </p>
-                <p className="text-xs text-slate-600 dark:text-slate-300">
-                  Senaste uppdatering
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Recent Activity */}
+    <div className="space-y-8">
+      {/* Recent Activity Module */}
       <Card className="border-blue-200 dark:border-slate-700">
         <CardHeader>
-          <CardTitle className="text-lg text-slate-900 dark:text-white">
+          <CardTitle className="text-xl text-slate-900 dark:text-white">
             Senaste Aktivitet
           </CardTitle>
+          <CardDescription>
+            En översikt av de senast inkomna observationerna.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -141,13 +77,83 @@ const StatsOverview = () => {
               </div>
             ))}
           </div>
-          <div className="text-center mt-4">
-            <button className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
+          <div className="text-center mt-6">
+            <button className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
               Visa alla rapporter →
             </button>
           </div>
         </CardContent>
       </Card>
+
+      {/* Stats Module */}
+      <div>
+        <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">Statistiköversikt</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <Card className="border-blue-200 dark:border-slate-700">
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-2">
+                <TrendingUp className="w-5 h-5 text-blue-600" />
+                <div>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                    {stats.totalReports.toLocaleString()}
+                  </p>
+                  <p className="text-xs text-slate-600 dark:text-slate-300">
+                    Totala rapporter
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-blue-200 dark:border-slate-700">
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-2">
+                <Clock className="w-5 h-5 text-green-600" />
+                <div>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                    {stats.todayReports}
+                  </p>
+                  <p className="text-xs text-slate-600 dark:text-slate-300">
+                    Idag
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-blue-200 dark:border-slate-700">
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-2">
+                <AlertTriangle className="w-5 h-5 text-red-600" />
+                <div>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                    {stats.activeAlerts}
+                  </p>
+                  <p className="text-xs text-slate-600 dark:text-slate-300">
+                    Aktiva varningar
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-blue-200 dark:border-slate-700">
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-2">
+                <MapPin className="w-5 h-5 text-purple-600" />
+                <div>
+                  <p className="text-sm font-bold text-slate-900 dark:text-white">
+                    {stats.lastUpdate}
+                  </p>
+                  <p className="text-xs text-slate-600 dark:text-slate-300">
+                    Senaste uppdatering
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 };
