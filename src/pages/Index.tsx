@@ -16,7 +16,7 @@ import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import { Session } from '@supabase/supabase-js';
 import { useTranslation } from 'react-i18next';
-import { submitReport } from '@/services/reportService';
+import { submitReport } from '@/services/reportService.tsx';
 
 // Define a type for the report data coming from the form
 interface ReportFormData {
