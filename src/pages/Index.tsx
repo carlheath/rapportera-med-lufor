@@ -1,15 +1,48 @@
-
 import { useState } from 'react';
-import { MapPin, Camera, Clock, Zap, Info } from 'lucide-react';
+import { MapPin, Camera, Clock, Zap, Info, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import ReportForm from '@/components/ReportForm';
 import StatsOverview from '@/components/StatsOverview';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+
+// Define a type for the report data coming from the form
+// This is an approximation; the actual ReportForm data structure might be more complex
+// We'll adapt this as needed based on the actual data structure from ReportForm
+interface ReportFormData {
+  locationStep?: {
+    latitude: number;
+    longitude: number;
+    accuracy?: number;
+    weather?: any; // Weather data from WeatherWidget
+  };
+  documentStep?: {
+    photo?: File | string; // Could be File object or a data URL
+    video?: File | string;
+    photo_url?: string; // Potentially presigned URL if handled by form
+    video_url?: string; // Potentially presigned URL if handled by form
+  };
+  descriptionStep?: {
+    description?: string;
+  };
+  detailsStep?: {
+    // Assuming detailsStep contains various specific questions
+    [key: string]: any; 
+  };
+  contactStep?: {
+    // Assuming contactStep contains contact fields
+    [key: string]: any;
+  };
+  // other top-level fields from the form
+  [key: string]: any;
+}
 
 const Index = () => {
   const [showReportForm, setShowReportForm] = useState(false);
   const [reportMode, setReportMode] = useState<'quick' | 'detailed'>('quick');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleQuickReport = () => {
     setReportMode('quick');
@@ -21,12 +54,69 @@ const Index = () => {
     setShowReportForm(true);
   };
 
+  const handleReportSubmit = async (formData: ReportFormData) => {
+    setIsSubmitting(true);
+    console.log("Form data received:", formData);
+
+    // TODO: Implement file uploads to Supabase Storage if photo/video are File objects
+    // For now, assuming photo_url/video_url might be directly provided or handled by ReportForm
+    // If formData.documentStep.photo is a File, we'll need to upload it first.
+    // This will be a follow-up step. For now, we pass what we have.
+
+    const reportToInsert = {
+      report_mode: reportMode,
+      latitude: formData.locationStep?.latitude,
+      longitude: formData.locationStep?.longitude,
+      accuracy: formData.locationStep?.accuracy,
+      // Assuming ReportForm provides direct URLs or we'll handle file uploads later
+      photo_url: typeof formData.documentStep?.photo === 'string' ? formData.documentStep.photo : formData.documentStep?.photo_url,
+      video_url: typeof formData.documentStep?.video === 'string' ? formData.documentStep.video : formData.documentStep?.video_url,
+      description: formData.descriptionStep?.description,
+      details: formData.detailsStep,
+      contact_info: formData.contactStep,
+      weather_data: formData.locationStep?.weather,
+      raw_form_data: formData, // Store the entire form data for auditing
+      // status will default to 'new' in the database
+    };
+
+    console.log("Data to insert into Supabase:", reportToInsert);
+
+    // Validate required fields
+    if (!reportToInsert.latitude || !reportToInsert.longitude) {
+      toast.error("Fel vid rapportering", {
+        description: "Platsinformation (latitud och longitud) är obligatorisk.",
+        icon: <AlertTriangle className="w-4 h-4" />,
+      });
+      setIsSubmitting(false);
+      return;
+    }
+    
+    const { error } = await supabase.from('reports').insert([reportToInsert]);
+
+    setIsSubmitting(false);
+
+    if (error) {
+      console.error("Error inserting report:", error);
+      toast.error("Fel vid rapportering", {
+        description: `Ett fel uppstod: ${error.message}. Försök igen.`,
+        icon: <AlertTriangle className="w-4 h-4" />,
+      });
+    } else {
+      toast.success("Rapport skickad!", {
+        description: "Tack för din observation. Din rapport har tagits emot.",
+      });
+      setShowReportForm(false); // Close the form on successful submission
+    }
+  };
+
   if (showReportForm) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
         <ReportForm 
           mode={reportMode} 
-          onBack={() => setShowReportForm(false)} 
+          onBack={() => setShowReportForm(false)}
+          onSubmit={handleReportSubmit}
+          isSubmitting={isSubmitting} // Pass submitting state to ReportForm if it supports it
         />
       </div>
     );
@@ -75,6 +165,7 @@ const Index = () => {
               onClick={handleQuickReport}
               size="lg"
               className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 text-lg h-auto"
+              disabled={isSubmitting}
             >
               <Zap className="w-5 h-5 mr-2" />
               Snabbrapport (30 sek)
@@ -84,6 +175,7 @@ const Index = () => {
               variant="outline"
               size="lg"
               className="border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 px-8 py-4 text-lg h-auto"
+              disabled={isSubmitting}
             >
               <Clock className="w-5 h-5 mr-2" />
               Detaljerad Rapport
@@ -105,7 +197,7 @@ const Index = () => {
                 LUFOR (Luftrums- och Flygfarkost Observationsrapportering) genomförs inom ramen för 
                 initiativet <strong>Samarbete för Hybrid Innovation inom Totalförsvaret (SHIFT)</strong>. 
                 Systemet utvecklas för att stärka Sveriges förmåga att upptäcka och rapportera oidentifierade 
-                drönare genom medborgarnas observationer, vilket bidrar till nationell säkerhet och beredskap.
+                drönare genom medborgarnas observationer, vilket bidrar till nationell säkerhet och beredskap. Nu med datalagring i Supabase!
               </CardDescription>
             </CardContent>
           </Card>
