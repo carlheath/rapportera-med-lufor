@@ -27,6 +27,25 @@ interface ReportFormData {
 export const submitReport = async (formData: ReportFormData, t: TFunction) => {
   console.log("Form data received for submission:", formData);
 
+  let weatherData = null;
+  if (formData.location) {
+    try {
+      console.log("Fetching weather data for submission...");
+      const { data, error } = await supabase.functions.invoke('get-weather', {
+        body: { lat: formData.location.lat, lng: formData.location.lng },
+      });
+      if (error) {
+        console.warn("Could not fetch weather data on submission:", error.message);
+      } else {
+        weatherData = data;
+        console.log("Fetched weather data on submission:", weatherData);
+      }
+    } catch (e: any) {
+      console.warn("Exception while fetching weather data on submission:", e.message);
+    }
+  }
+
+
   // TODO: Implement file uploads to Supabase Storage.
   // This will be a follow-up step. For now, we pass what we have.
 
@@ -49,7 +68,7 @@ export const submitReport = async (formData: ReportFormData, t: TFunction) => {
     description: formData.description,
     details: details,
     contact_info: { contact: formData.contactInfo },
-    weather_data: null, // Placeholder for now
+    weather_data: weatherData, // Use fetched weather data
     raw_form_data: formData,
     external_link_url: formData.external_link_url || null,
   };

@@ -1,8 +1,9 @@
 
 import { useState, useEffect } from 'react';
-import { Cloud, Sun, CloudRain, Wind, Thermometer } from 'lucide-react';
+import { Cloud, Sun, CloudRain, Wind, Thermometer, AlertCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { supabase } from '@/integrations/supabase/client';
 
 interface WeatherWidgetProps {
   location: { lat: number; lng: number; accuracy: number } | null;
@@ -20,6 +21,7 @@ interface WeatherData {
 const WeatherWidget = ({ location }: WeatherWidgetProps) => {
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (location) {
@@ -31,38 +33,48 @@ const WeatherWidget = ({ location }: WeatherWidgetProps) => {
     if (!location) return;
     
     setIsLoading(true);
+    setError(null);
+    setWeather(null);
     try {
-      // Simulate weather API call - in real implementation, use OpenWeatherMap API
-      await new Promise(resolve => setTimeout(resolve, 1000));
+       const { data, error: functionError } = await supabase.functions.invoke('get-weather', {
+        body: { lat: location.lat, lng: location.lng },
+      });
+
+      if (functionError) {
+        throw new Error(functionError.message);
+      }
       
-      // Mock weather data
-      const mockWeather: WeatherData = {
-        temperature: Math.round(Math.random() * 20 + 5), // 5-25°C
-        description: ['Klart', 'Delvis molnigt', 'Molnigt', 'Lätt regn'][Math.floor(Math.random() * 4)],
-        windSpeed: Math.round(Math.random() * 15 + 2), // 2-17 m/s
-        humidity: Math.round(Math.random() * 40 + 40), // 40-80%
-        visibility: Math.round(Math.random() * 5 + 5), // 5-10 km
-        icon: ['sun', 'cloud', 'cloud-rain'][Math.floor(Math.random() * 3)]
+      const transformedData: WeatherData = {
+        temperature: Math.round(data.main.temp),
+        description: data.weather[0].description,
+        windSpeed: Math.round(data.wind.speed),
+        humidity: data.main.humidity,
+        visibility: data.visibility / 1000,
+        icon: data.weather[0].icon,
       };
       
-      setWeather(mockWeather);
-    } catch (error) {
-      console.error('Weather fetch error:', error);
+      setWeather(transformedData);
+    } catch (err: any) {
+      console.error('Weather fetch error:', err);
+      setError('Kunde inte hämta väderdata.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const getWeatherIcon = (icon: string) => {
-    switch (icon) {
-      case 'sun':
-        return <Sun className="w-5 h-5 text-yellow-500" />;
-      case 'cloud':
-        return <Cloud className="w-5 h-5 text-gray-500" />;
-      case 'cloud-rain':
-        return <CloudRain className="w-5 h-5 text-blue-500" />;
-      default:
-        return <Cloud className="w-5 h-5 text-gray-500" />;
+  const getWeatherIcon = (iconCode: string) => {
+    const mainIcon = iconCode.substring(0, 2);
+    switch (mainIcon) {
+      case '01': return <Sun className="w-5 h-5 text-yellow-500" />;
+      case '02':
+      case '03':
+      case '04': return <Cloud className="w-5 h-5 text-slate-500" />;
+      case '09':
+      case '10': return <CloudRain className="w-5 h-5 text-blue-500" />;
+      case '11': return <CloudRain className="w-5 h-5 text-yellow-600" />;
+      case '13': return <Cloud className="w-5 h-5 text-white" />;
+      case '50': return <Wind className="w-5 h-5 text-slate-400" />;
+      default: return <Cloud className="w-5 h-5 text-slate-500" />;
     }
   };
 
@@ -91,7 +103,7 @@ const WeatherWidget = ({ location }: WeatherWidgetProps) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 {getWeatherIcon(weather.icon)}
-                <span className="text-sm font-medium">{weather.description}</span>
+                <span className="text-sm font-medium capitalize">{weather.description}</span>
               </div>
               <div className="flex items-center space-x-1">
                 <Thermometer className="w-4 h-4 text-red-500" />
@@ -108,7 +120,7 @@ const WeatherWidget = ({ location }: WeatherWidgetProps) => {
                 Fuktighet: {weather.humidity}%
               </div>
               <div>
-                Sikt: {weather.visibility} km
+                Sikt: {weather.visibility.toFixed(1)} km
               </div>
             </div>
 
@@ -116,9 +128,14 @@ const WeatherWidget = ({ location }: WeatherWidgetProps) => {
               Väderdata hjälper till att bedöma synlighet och flygförhållanden
             </div>
           </div>
+        ) : error ? (
+           <div className="text-sm text-red-600 dark:text-red-500 text-center py-2 flex items-center justify-center space-x-2">
+            <AlertCircle className="w-4 h-4" />
+            <span>{error}</span>
+          </div>
         ) : (
           <div className="text-sm text-slate-500 dark:text-slate-400 text-center py-2">
-            Kunde inte hämta väderdata
+            Väderinformation visas här.
           </div>
         )}
       </CardContent>
@@ -127,3 +144,4 @@ const WeatherWidget = ({ location }: WeatherWidgetProps) => {
 };
 
 export default WeatherWidget;
+
