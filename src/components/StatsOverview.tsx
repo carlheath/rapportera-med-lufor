@@ -8,9 +8,10 @@ import StatsGrid from './stats/StatsGrid';
 
 const StatsOverview = () => {
   const { t } = useTranslation();
-  const { data: statsData, isLoading: isLoadingStats, isError } = useQuery({
+  const { data: statsData, isLoading: isLoadingStats, isError, error } = useQuery({
     queryKey: ['statsOverview'],
     queryFn: async () => {
+      console.log("Fetching stats data...");
       const totalReportsPromise = supabase
         .from('reports')
         .select('*', { count: 'exact', head: true });
@@ -41,9 +42,11 @@ const StatsOverview = () => {
       ] = await Promise.all([totalReportsPromise, todayReportsPromise, activeAlertsPromise, recentActivityPromise]);
 
       if (totalError || todayError || activeError || recentError) {
-        console.error({ totalError, todayError, activeError, recentError });
+        console.error("Supabase query errors:", { totalError, todayError, activeError, recentError });
         throw new Error('Failed to fetch stats data.');
       }
+      
+      console.log("Successfully fetched stats data:", { totalReports, todayReports, activeAlerts });
 
       const lastUpdate = recentActivityData && recentActivityData.length > 0 ? recentActivityData[0].created_at : null;
 
@@ -70,6 +73,8 @@ const StatsOverview = () => {
     },
     refetchInterval: 60000, // Refetch every 60 seconds
   });
+
+  console.log('StatsOverview component state:', { isLoading: isLoadingStats, isError, error, data: statsData });
 
   if (isError) {
     return (
