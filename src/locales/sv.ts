@@ -1,4 +1,3 @@
-
 const sv = {
   header: {
     about: "Om LUFOR",
@@ -6,7 +5,8 @@ const sv = {
     reportBug: "Rapportera en bugg",
     logout: "Logga ut",
     login: "Logga in",
-    logoAlt: "LUFOR-logotyp"
+    logoAlt: "LUFOR-logotyp",
+    menuAriaLabel: "Öppna meny"
   },
   indexPage: {
     heroTitle: "Observerat en drönare?",
@@ -116,6 +116,11 @@ const sv = {
     contactLabel: 'E-post eller telefonnummer',
     contactPlaceholder: 'din.email@exempel.se eller 070-123 45 67',
     contactGdpr: 'Endast för uppföljning. Behandlas enligt GDPR.',
+    fileErrors: {
+      fileTooLarge: 'Filen får inte vara större än 10MB',
+      invalidFileType: 'Endast bilder (JPEG, PNG, WebP) och videor (MP4, WebM) är tillåtna',
+      invalidFileName: 'Filnamnet innehåller ogiltiga tecken'
+    }
   },
   statsOverview: {
     errorTitle: "Fel vid hämtning av data",

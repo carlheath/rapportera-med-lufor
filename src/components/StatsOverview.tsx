@@ -1,12 +1,10 @@
 
-import { TrendingUp, MapPin, Clock, AlertTriangle } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { format } from 'date-fns';
-import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from 'react-i18next';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import RecentActivity from './stats/RecentActivity';
+import StatsGrid from './stats/StatsGrid';
 
 const StatsOverview = () => {
   const { t } = useTranslation();
@@ -73,32 +71,6 @@ const StatsOverview = () => {
     refetchInterval: 60000, // Refetch every 60 seconds
   });
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high':
-        return 'text-red-700 border-red-300 bg-red-50 dark:text-red-400 dark:border-red-600 dark:bg-red-900/20';
-      case 'medium':
-        return 'text-yellow-700 border-yellow-300 bg-yellow-50 dark:text-yellow-400 dark:border-yellow-600 dark:bg-yellow-900/20';
-      case 'low':
-        return 'text-green-700 border-green-300 bg-green-50 dark:text-green-400 dark:border-green-600 dark:bg-green-900/20';
-      default:
-        return 'text-gray-700 border-gray-300 bg-gray-50';
-    }
-  };
-
-  const getPriorityText = (priority: string) => {
-    switch (priority) {
-      case 'high':
-        return t('statsOverview.priorityHigh');
-      case 'medium':
-        return t('statsOverview.priorityMedium');
-      case 'low':
-        return t('statsOverview.priorityLow');
-      default:
-        return t('statsOverview.priorityUnknown');
-    }
-  };
-
   if (isError) {
     return (
       <Card className="border-red-200 dark:border-red-700">
@@ -114,118 +86,8 @@ const StatsOverview = () => {
 
   return (
     <div className="space-y-8">
-      {/* Recent Activity Module */}
-      <Card className="border-blue-200 dark:border-slate-700">
-        <CardHeader>
-          <CardTitle className="text-xl text-slate-900 dark:text-white">
-            {t('statsOverview.recentActivityTitle')}
-          </CardTitle>
-          <CardDescription>
-            {t('statsOverview.recentActivityDescription')}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {isLoadingStats ? (
-              Array.from({ length: 3 }).map((_, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg animate-pulse">
-                  <div className="flex items-center space-x-3 w-full">
-                    <Skeleton className="w-4 h-4 rounded-full" />
-                    <div className="space-y-2 flex-grow">
-                      <Skeleton className="h-4 w-3/4" />
-                      <Skeleton className="h-3 w-1/4" />
-                    </div>
-                  </div>
-                  <Skeleton className="h-6 w-16" />
-                </div>
-              ))
-            ) : statsData?.recentActivity && statsData.recentActivity.length > 0 ? (
-              statsData.recentActivity.map((activity, index) => {
-                const priority = (activity.details as { urgencyLevel: string })?.urgencyLevel || 'low';
-                return (
-                  <div key={index} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <MapPin className="w-4 h-4 text-slate-500" />
-                      <div>
-                        <p className="text-sm font-medium text-slate-900 dark:text-white">
-                          {activity.description || t('statsOverview.noDescription')}
-                        </p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">
-                          {format(new Date(activity.created_at), 'HH:mm')}
-                        </p>
-                      </div>
-                    </div>
-                    <Badge variant="outline" className={getPriorityColor(priority)}>
-                      {getPriorityText(priority)}
-                    </Badge>
-                  </div>
-                );
-              })
-            ) : (
-              <p className="text-center text-slate-500 dark:text-slate-400 py-4">{t('statsOverview.noRecentActivity')}</p>
-            )}
-          </div>
-          <div className="text-center mt-6">
-            <button className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
-              {t('statsOverview.viewAllReports')}
-            </button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Stats Module */}
-      <div>
-        <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">{t('statsOverview.statsTitle')}</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card className="border-blue-200 dark:border-slate-700">
-            <CardContent className="p-4">
-                <div className="flex items-center space-x-2">
-                  <TrendingUp className="w-5 h-5 text-blue-600" />
-                  <div>
-                    {isLoadingStats ? <Skeleton className="h-7 w-16 mb-1" /> : <p className="text-2xl font-bold text-slate-900 dark:text-white">{statsData?.totalReports.toLocaleString()}</p>}
-                    <p className="text-xs text-slate-600 dark:text-slate-300">{t('statsOverview.totalReports')}</p>
-                  </div>
-                </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-blue-200 dark:border-slate-700">
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-2">
-                <Clock className="w-5 h-5 text-green-600" />
-                 <div>
-                    {isLoadingStats ? <Skeleton className="h-7 w-12 mb-1" /> : <p className="text-2xl font-bold text-slate-900 dark:text-white">{statsData?.todayReports}</p>}
-                    <p className="text-xs text-slate-600 dark:text-slate-300">{t('statsOverview.today')}</p>
-                  </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-blue-200 dark:border-slate-700">
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-2">
-                <AlertTriangle className="w-5 h-5 text-red-600" />
-                <div>
-                  {isLoadingStats ? <Skeleton className="h-7 w-8 mb-1" /> : <p className="text-2xl font-bold text-slate-900 dark:text-white">{statsData?.activeAlerts}</p>}
-                  <p className="text-xs text-slate-600 dark:text-slate-300">{t('statsOverview.activeAlerts')}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-blue-200 dark:border-slate-700">
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-2">
-                <MapPin className="w-5 h-5 text-purple-600" />
-                <div>
-                    {isLoadingStats || !statsData?.lastUpdate ? <Skeleton className="h-5 w-28 mb-1" /> : <p className="text-sm font-bold text-slate-900 dark:text-white">{format(new Date(statsData.lastUpdate), 'yyyy-MM-dd HH:mm')}</p>}
-                  <p className="text-xs text-slate-600 dark:text-slate-300">{t('statsOverview.lastUpdate')}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      <RecentActivity activities={statsData?.recentActivity} isLoading={isLoadingStats} />
+      <StatsGrid stats={statsData} isLoading={isLoadingStats} />
     </div>
   );
 };

@@ -47,21 +47,21 @@ export const getSessionId = (): string => {
 };
 
 // File validation helper
-export const validateFile = (file: File): { isValid: boolean; error?: string } => {
+export const validateFile = (file: File): { isValid: boolean; errorKey?: string } => {
   // Check file size (10MB limit)
   if (file.size > 10 * 1024 * 1024) {
-    return { isValid: false, error: 'Filen får inte vara större än 10MB' };
+    return { isValid: false, errorKey: 'fileTooLarge' };
   }
   
   // Check file type
   const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'video/mp4', 'video/webm'];
   if (!allowedTypes.includes(file.type)) {
-    return { isValid: false, error: 'Endast bilder (JPEG, PNG, WebP) och videor (MP4, WebM) är tillåtna' };
+    return { isValid: false, errorKey: 'invalidFileType' };
   }
   
   // Check file name for suspicious patterns
   if (/[<>:"/\\|?*]/.test(file.name)) {
-    return { isValid: false, error: 'Filnamnet innehåller otillåtna tecken' };
+    return { isValid: false, errorKey: 'invalidFileName' };
   }
   
   return { isValid: true };

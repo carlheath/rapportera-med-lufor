@@ -5,7 +5,8 @@ const en = {
     reportBug: "Report a bug",
     logout: "Log out",
     login: "Log in",
-    logoAlt: "LUFOR logo"
+    logoAlt: "LUFOR logo",
+    menuAriaLabel: "Open menu"
   },
   indexPage: {
     heroTitle: "Observed a drone?",
@@ -115,6 +116,11 @@ const en = {
     contactLabel: 'Email or phone number',
     contactPlaceholder: 'your.email@example.com or 070-123 45 67',
     contactGdpr: 'For follow-up only. Processed according to GDPR.',
+    fileErrors: {
+      fileTooLarge: 'File must not be larger than 10MB',
+      invalidFileType: 'Only images (JPEG, PNG, WebP) and videos (MP4, WebM) are allowed',
+      invalidFileName: 'File name contains invalid characters'
+    }
   },
   statsOverview: {
     errorTitle: "Error fetching data",

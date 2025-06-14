@@ -13,7 +13,7 @@ import CameraCapture from './CameraCapture';
 import LocationCapture from './LocationCapture';
 import WeatherWidget from './WeatherWidget';
 import { reportFormSchema } from '@/lib/validation';
-import { sanitizeText, rateLimiter, getSessionId } from '@/lib/security';
+import { sanitizeText, rateLimiter, getSessionId, validateFile } from '@/lib/security';
 import StepDocument from './report/StepDocument';
 import StepLocation from './report/StepLocation';
 import StepDescription from './report/StepDescription';
@@ -86,9 +86,23 @@ const ReportForm = ({ mode, onBack, onSubmit, isSubmitting }: ReportFormProps) =
   };
 
   const handleMediaCapture = (files: File[]) => {
-    setMediaFiles(prev => [...prev, ...files]);
-    if (mode === 'quick') {
-      setStep(2);
+    const validFiles: File[] = [];
+    for (const file of files) {
+      const { isValid, errorKey } = validateFile(file);
+      if (isValid) {
+        validFiles.push(file);
+      } else if (errorKey) {
+        toast.error(t('reportForm.validationErrorTitle'), {
+          description: t(`reportForm.fileErrors.${errorKey}`),
+        });
+      }
+    }
+
+    if (validFiles.length > 0) {
+      setMediaFiles(prev => [...prev, ...validFiles]);
+      if (mode === 'quick') {
+        setStep(2);
+      }
     }
   };
 

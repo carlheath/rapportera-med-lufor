@@ -16,6 +16,7 @@ import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import { Session } from '@supabase/supabase-js';
 import { useTranslation } from 'react-i18next';
+import { submitReport } from '@/services/reportService';
 
 // Define a type for the report data coming from the form
 interface ReportFormData {
@@ -66,64 +67,10 @@ const Index = () => {
 
   const handleReportSubmit = async (formData: ReportFormData) => {
     setIsSubmitting(true);
-    console.log("Form data received:", formData);
-
-    // TODO: Implement file uploads to Supabase Storage if photo/video are File objects
-    // For now, assuming photo_url/video_url might be directly provided or handled by ReportForm
-    // If formData.documentStep.photo is a File, we'll need to upload it first.
-    // This will be a follow-up step. For now, we pass what we have.
-
-    const details = {
-      droneSize: formData.droneSize,
-      droneColor: formData.droneColor,
-      flightPattern: formData.flightPattern,
-      duration: formData.duration,
-      numberOfDrones: formData.numberOfDrones,
-      urgencyLevel: formData.urgencyLevel,
-    };
-
-    const reportToInsert = {
-      report_mode: formData.reportMode,
-      latitude: formData.location?.lat,
-      longitude: formData.location?.lng,
-      accuracy: formData.location?.accuracy,
-      // Assuming ReportForm provides direct URLs or we'll handle file uploads later
-      photo_url: null,
-      video_url: null,
-      description: formData.description,
-      details: details,
-      contact_info: { contact: formData.contactInfo },
-      weather_data: null, // Placeholder for now
-      raw_form_data: formData, // Store the entire form data for auditing
-      // status will default to 'new' in the database
-    };
-
-    console.log("Data to insert into Supabase:", reportToInsert);
-
-    // Validate required fields
-    if (!reportToInsert.latitude || !reportToInsert.longitude) {
-      toast.error(t('toasts.reportError'), {
-        description: t('toasts.reportErrorLocationMissing'),
-        icon: <AlertTriangle className="w-4 h-4" />,
-      });
-      setIsSubmitting(false);
-      return;
-    }
-    
-    const { error } = await supabase.from('reports').insert([reportToInsert]);
-
+    const { success } = await submitReport(formData, t);
     setIsSubmitting(false);
 
-    if (error) {
-      console.error("Error inserting report:", error);
-      toast.error(t('toasts.reportError'), {
-        description: t('toasts.genericError', { message: error.message }),
-        icon: <AlertTriangle className="w-4 h-4" />,
-      });
-    } else {
-      toast.success(t('toasts.reportSuccess'), {
-        description: t('toasts.reportSuccessDescription'),
-      });
+    if (success) {
       setShowReportForm(false); // Close the form on successful submission
     }
   };
@@ -146,7 +93,7 @@ const Index = () => {
       <Header>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" aria-label="Öppna meny">
+            <Button variant="ghost" size="icon" aria-label={t('header.menuAriaLabel')}>
               <Menu className="h-6 w-6" />
             </Button>
           </DropdownMenuTrigger>
@@ -201,7 +148,7 @@ const Index = () => {
               size="lg"
               className="font-bold px-12 py-6 text-xl h-auto shadow-lg"
               disabled={isSubmitting}
-              aria-label="Rapportera drönare"
+              aria-label={t('indexPage.reportButton')}
             >
               <Zap className="w-6 h-6 mr-3" />
               {t('indexPage.reportButton')}
@@ -223,7 +170,7 @@ const Index = () => {
           size="lg"
           className="w-full font-bold py-5 text-lg h-auto shadow-lg"
           disabled={isSubmitting}
-          aria-label="Rapportera drönare"
+          aria-label={t('indexPage.reportButton')}
         >
           <Zap className="w-6 h-6 mr-3" />
           {t('indexPage.reportButton')}
