@@ -72,7 +72,7 @@ const StepDetails = ({ formData, onChange, validationErrors }: StepDetailsProps)
               <SelectValue placeholder={t('reportForm.durationPlaceholder')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="<1min">{t('reportForm.durationLt1m')}</SelectItem>
+              <SelectItem value="lt1m">{t('reportForm.durationLt1m')}</SelectItem>
               <SelectItem value="1-5min">{t('reportForm.duration1to5m')}</SelectItem>
               <SelectItem value="5-15min">{t('reportForm.duration5to15m')}</SelectItem>
               <SelectItem value="15min+">{t('reportForm.durationGt15m')}</SelectItem>

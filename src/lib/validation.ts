@@ -16,7 +16,7 @@ export const reportFormSchema = z.object({
   
   flightPattern: z.enum(['', 'hovering', 'circular', 'linear', 'erratic']),
   
-  duration: z.enum(['', '<1min', '1-5min', '5-15min', '15min+']),
+  duration: z.enum(['', 'lt1m', '1-5min', '5-15min', '15min+']),
   
   numberOfDrones: z.enum(['1', '2', '3-5', '5+']),
   
