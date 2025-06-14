@@ -1,5 +1,6 @@
+
 import { useState } from 'react';
-import { Camera, Zap, AlertTriangle, Menu, Bug, LogIn, Language } from 'lucide-react';
+import { Camera, Zap, AlertTriangle, Menu, Bug, LogIn, Languages } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ReportForm from '@/components/ReportForm';
 import StatsOverview from '@/components/StatsOverview';
@@ -147,7 +148,7 @@ const Index = () => {
                   <Link to="/about">Om LUFOR</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => toast.info('Funktion för språkbyte kommer snart.')}>
-                  <Language className="mr-2 h-4 w-4" />
+                  <Languages className="mr-2 h-4 w-4" />
                   <span>Byt språk (Engelska)</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
