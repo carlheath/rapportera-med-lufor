@@ -26,7 +26,7 @@ const About = () => {
               Genom att rapportera dina observationer bidrar du direkt till en tryggare och säkrare miljö. Varje rapport är en viktig pusselbit som hjälper myndigheter och andra aktörer att få en bättre bild av aktiviteten i luftrummet.
             </p>
             <p>
-              Denna applikation är utvecklad med fokus på användarvänlighet, säkerhet och tillgänglighet för att göra det så enkelt som möjligt för alla att bidra. Din data hanteras med största sekretess och används endast i syfte att stärka den nationella säkerheten.
+              Denna applikation är utvecklad inom forskningsprogrammet SHIFT och drivs av RISE - Research Institutes of Sweden, med fokus på användarvänlighet och säkerhet. Din data hanteras med största sekretess och används endast i syfte att stärka den nationella säkerheten.
             </p>
             <p>Tack för ditt engagemang!</p>
           </div>
