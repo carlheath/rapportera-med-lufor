@@ -1,19 +1,20 @@
 
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import Header from '@/components/Header';
+import { ArrowLeft } from 'lucide-react';
 
 const About = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="bg-background/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-border sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-4">
-          <Button asChild variant="outline">
-            <Link to="/">
-              Tillbaka till startsidan
-            </Link>
-          </Button>
-        </div>
-      </header>
+      <Header>
+        <Button asChild variant="outline">
+          <Link to="/" className="flex items-center">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Tillbaka
+          </Link>
+        </Button>
+      </Header>
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-4xl font-bold mb-4">Om LUFOR</h1>

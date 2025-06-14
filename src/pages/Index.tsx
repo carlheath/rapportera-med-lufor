@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { Camera, Zap, AlertTriangle, Menu, Bug, LogIn, Languages } from 'lucide-react';
+import { Zap, AlertTriangle, Menu, Bug, LogIn, Languages } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ReportForm from '@/components/ReportForm';
 import StatsOverview from '@/components/StatsOverview';
@@ -14,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Link } from 'react-router-dom';
+import Header from '@/components/Header';
 
 // Define a type for the report data coming from the form
 interface ReportFormData {
@@ -120,55 +120,37 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Header */}
-      <header className="bg-background/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-border sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <Camera className="w-6 h-6 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-foreground">
-                  LUFOR
-                </h1>
-                <p className="text-sm text-muted-foreground">
-                  Observation och rapportering av luftfarkoster
-                </p>
-              </div>
-            </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Öppna meny">
-                  <Menu className="h-6 w-6" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem asChild>
-                  <Link to="/about">Om LUFOR</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => toast.info('Funktion för språkbyte kommer snart.')}>
-                  <Languages className="mr-2 h-4 w-4" />
-                  <span>Byt språk (Engelska)</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <a href="mailto:bugg@lufor.se?subject=Buggrapport LUFOR" className="w-full flex items-center">
-                    <Bug className="mr-2 h-4 w-4" />
-                    <span>Rapportera en bugg</span>
-                  </a>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to="/login">
-                    <LogIn className="mr-2 h-4 w-4" />
-                    <span>Logga in</span>
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
-      </header>
+      <Header>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" aria-label="Öppna meny">
+              <Menu className="h-6 w-6" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuItem asChild>
+              <Link to="/about">Om LUFOR</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => toast.info('Funktion för språkbyte kommer snart.')}>
+              <Languages className="mr-2 h-4 w-4" />
+              <span>Byt språk (Engelska)</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <a href="mailto:bugg@lufor.se?subject=Buggrapport LUFOR" className="w-full flex items-center">
+                <Bug className="mr-2 h-4 w-4" />
+                <span>Rapportera en bugg</span>
+              </a>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link to="/login">
+                <LogIn className="mr-2 h-4 w-4" />
+                <span>Logga in</span>
+              </Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </Header>
 
       <main className="container mx-auto px-4 py-8 pb-32 sm:pb-12">
         {/* Hero Section */}

@@ -15,7 +15,7 @@
     --card-foreground: 215 28% 17%;
     --popover: 210 20% 98%;
     --popover-foreground: 215 28% 17%;
-    --primary: 217 91% 60%;
+    --primary: 213 56% 33%; /* Updated */
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 215 28% 17%;
@@ -23,11 +23,11 @@
     --muted-foreground: 215.4 16.3% 46.9%;
     --accent: 45 80% 60%;
     --accent-foreground: 45 90% 10%;
-    --destructive: 0 72% 51%; /* Tailwind red-600 */
+    --destructive: 0 63% 51%; /* Updated */
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 217 91% 60%;
+    --ring: 213 56% 33%; /* Updated */
     --radius: 0.5rem;
     --sidebar-background: 210 20% 98%;
     --sidebar-foreground: 215 28% 17%;
@@ -46,7 +46,7 @@
     --card-foreground: 210 20% 94%;
     --popover: 220 13% 11%;
     --popover-foreground: 210 20% 94%;
-    --primary: 217 91% 60%;
+    --primary: 213 60% 55%; /* Updated */
     --primary-foreground: 210 40% 98%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 20% 94%;
@@ -54,11 +54,11 @@
     --muted-foreground: 215 20.2% 65.1%;
     --accent: 45 76% 48%;
     --accent-foreground: 45 90% 10%;
-    --destructive: 0 70% 40%;
+    --destructive: 0 63% 51%; /* Updated */
     --destructive-foreground: 0 86% 97%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 217 91% 60%;
+    --ring: 213 60% 55%; /* Updated */
     --sidebar-background: 220 13% 11%;
     --sidebar-foreground: 210 20% 94%;
     --sidebar-primary: 217 91% 60%;
