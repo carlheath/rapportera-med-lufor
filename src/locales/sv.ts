@@ -1,3 +1,4 @@
+
 const sv = {
   header: {
     about: "Om LUFOR",
@@ -56,7 +57,8 @@ const sv = {
     p3: "Tack för ditt engagemang!"
   },
   common: {
-    back: "Tillbaka"
+    back: "Tillbaka",
+    or: "eller"
   },
   reportForm: {
     quickReport: 'Snabbrapport',
@@ -76,6 +78,8 @@ const sv = {
     documentTitle: 'Dokumentera Drönaren',
     documentSubtitle: 'Ta foton eller video av drönaren för bästa möjliga analys',
     filesAdded: '{{count}} fil(er) tillagda',
+    externalLink: "Extern Länk",
+    externalLinkDescription: "Länk till en video eller annat bevismaterial (t.ex. YouTube).",
     
     locationTitle: 'Lokalisering',
     locationSubtitle: 'Bekräfta din position för exakt rapportering',

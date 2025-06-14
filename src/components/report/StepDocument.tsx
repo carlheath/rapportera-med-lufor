@@ -4,6 +4,7 @@ import CameraCapture from '../CameraCapture';
 import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Youtube } from 'lucide-react';
 
 interface StepDocumentProps {
   mediaFiles: File[];
@@ -41,13 +42,16 @@ const StepDocument = ({ mediaFiles, onCapture, externalLink, onLinkChange, valid
       </div>
       <div>
         <Label htmlFor="external-link">{t('reportForm.externalLink')}</Label>
-        <Input
-          id="external-link"
-          placeholder="https://youtube.com/watch?v=..."
-          value={externalLink}
-          onChange={(e) => onLinkChange(e.target.value)}
-          className="mt-1"
-        />
+        <div className="relative mt-1">
+          <Youtube className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+          <Input
+            id="external-link"
+            placeholder="https://youtube.com/watch?v=..."
+            value={externalLink}
+            onChange={(e) => onLinkChange(e.target.value)}
+            className="pl-10"
+          />
+        </div>
         {validationError && (
           <p className="text-red-600 text-sm mt-1">{validationError}</p>
         )}

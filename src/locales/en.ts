@@ -1,3 +1,4 @@
+
 const en = {
   header: {
     about: "About LUFOR",
@@ -56,7 +57,8 @@ const en = {
     p3: "Thank you for your commitment!"
   },
   common: {
-    back: "Back"
+    back: "Back",
+    or: "or"
   },
   reportForm: {
     quickReport: 'Quick Report',
@@ -76,6 +78,8 @@ const en = {
     documentTitle: 'Document the Drone',
     documentSubtitle: 'Take photos or video of the drone for the best possible analysis',
     filesAdded: '{{count}} file(s) added',
+    externalLink: "External Link",
+    externalLinkDescription: "Link to a video or other evidence (e.g. YouTube).",
     
     locationTitle: 'Location',
     locationSubtitle: 'Confirm your position for accurate reporting',
