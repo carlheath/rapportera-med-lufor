@@ -9,33 +9,20 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 // Define a type for the report data coming from the form
-// This is an approximation; the actual ReportForm data structure might be more complex
-// We'll adapt this as needed based on the actual data structure from ReportForm
 interface ReportFormData {
-  locationStep?: {
-    latitude: number;
-    longitude: number;
-    accuracy?: number;
-    weather?: any; // Weather data from WeatherWidget
-  };
-  documentStep?: {
-    photo?: File | string; // Could be File object or a data URL
-    video?: File | string;
-    photo_url?: string; // Potentially presigned URL if handled by form
-    video_url?: string; // Potentially presigned URL if handled by form
-  };
-  descriptionStep?: {
-    description?: string;
-  };
-  detailsStep?: {
-    // Assuming detailsStep contains various specific questions
-    [key: string]: any; 
-  };
-  contactStep?: {
-    // Assuming contactStep contains contact fields
-    [key: string]: any;
-  };
-  // other top-level fields from the form
+  location: { lat: number, lng: number, accuracy: number } | null;
+  mediaFiles: File[];
+  description: string;
+  droneSize: string;
+  droneColor: string;
+  flightPattern: string;
+  duration: string;
+  numberOfDrones: string;
+  contactInfo: string;
+  urgencyLevel: string;
+  batteryLevel: number | null;
+  reportMode: 'quick' | 'detailed';
+  deviceInfo: any;
   [key: string]: any;
 }
 
@@ -63,18 +50,27 @@ const Index = () => {
     // If formData.documentStep.photo is a File, we'll need to upload it first.
     // This will be a follow-up step. For now, we pass what we have.
 
+    const details = {
+      droneSize: formData.droneSize,
+      droneColor: formData.droneColor,
+      flightPattern: formData.flightPattern,
+      duration: formData.duration,
+      numberOfDrones: formData.numberOfDrones,
+      urgencyLevel: formData.urgencyLevel,
+    };
+
     const reportToInsert = {
       report_mode: reportMode,
-      latitude: formData.locationStep?.latitude,
-      longitude: formData.locationStep?.longitude,
-      accuracy: formData.locationStep?.accuracy,
+      latitude: formData.location?.lat,
+      longitude: formData.location?.lng,
+      accuracy: formData.location?.accuracy,
       // Assuming ReportForm provides direct URLs or we'll handle file uploads later
-      photo_url: typeof formData.documentStep?.photo === 'string' ? formData.documentStep.photo : formData.documentStep?.photo_url,
-      video_url: typeof formData.documentStep?.video === 'string' ? formData.documentStep.video : formData.documentStep?.video_url,
-      description: formData.descriptionStep?.description,
-      details: formData.detailsStep,
-      contact_info: formData.contactStep,
-      weather_data: formData.locationStep?.weather,
+      photo_url: null,
+      video_url: null,
+      description: formData.description,
+      details: details,
+      contact_info: { contact: formData.contactInfo },
+      weather_data: null, // Placeholder for now
       raw_form_data: formData, // Store the entire form data for auditing
       // status will default to 'new' in the database
     };
@@ -116,7 +112,7 @@ const Index = () => {
           mode={reportMode} 
           onBack={() => setShowReportForm(false)}
           onSubmit={handleReportSubmit}
-          isSubmitting={isSubmitting} // Pass submitting state to ReportForm if it supports it
+          isSubmitting={isSubmitting} // Pass submitting state to ReportForm
         />
       </div>
     );

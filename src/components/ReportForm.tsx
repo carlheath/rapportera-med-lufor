@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 import CameraCapture from './CameraCapture';
 import LocationCapture from './LocationCapture';
 import WeatherWidget from './WeatherWidget';
-import { reportFormSchema, type ReportFormData, type LocationData } from '@/lib/validation';
+import { reportFormSchema } from '@/lib/validation';
 import { sanitizeText, rateLimiter, getSessionId, getCSRFToken } from '@/lib/security';
 import StepDocument from './report/StepDocument';
 import StepLocation from './report/StepLocation';
@@ -23,9 +23,11 @@ import StepContact from './report/StepContact';
 interface ReportFormProps {
   mode: 'quick' | 'detailed';
   onBack: () => void;
+  onSubmit: (data: any) => void;
+  isSubmitting: boolean;
 }
 
-const ReportForm = ({ mode, onBack }: ReportFormProps) => {
+const ReportForm = ({ mode, onBack, onSubmit, isSubmitting }: ReportFormProps) => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     description: '',
@@ -39,7 +41,6 @@ const ReportForm = ({ mode, onBack }: ReportFormProps) => {
   });
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
   const [location, setLocation] = useState<{ lat: number; lng: number; accuracy: number } | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [batteryLevel, setBatteryLevel] = useState<number | null>(null);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
@@ -108,7 +109,7 @@ const ReportForm = ({ mode, onBack }: ReportFormProps) => {
 
     // Validate form data
     try {
-      const validatedData = reportFormSchema.parse(formData);
+      reportFormSchema.parse(formData);
       setValidationErrors({});
     } catch (error: any) {
       const errors: Record<string, string> = {};
@@ -122,49 +123,21 @@ const ReportForm = ({ mode, onBack }: ReportFormProps) => {
       return;
     }
 
-    setIsSubmitting(true);
-    
-    try {
-      const csrfToken = getCSRFToken();
-      
-      // Simulate API call with security headers
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const reportData = {
-        ...formData,
-        description: sanitizeText(formData.description),
-        droneColor: sanitizeText(formData.droneColor),
-        contactInfo: sanitizeText(formData.contactInfo),
-        location,
-        mediaCount: mediaFiles.length,
-        timestamp: new Date().toISOString(),
-        batteryLevel,
-        reportMode: mode,
-        csrfToken,
-        sessionId,
-        deviceInfo: {
-          userAgent: navigator.userAgent.substring(0, 200), // Limit user agent length
-          language: navigator.language,
-          screenResolution: `${screen.width}x${screen.height}`
-        }
-      };
+    const reportData = {
+      ...formData,
+      location,
+      mediaFiles,
+      timestamp: new Date().toISOString(),
+      batteryLevel,
+      reportMode: mode,
+      deviceInfo: {
+        userAgent: navigator.userAgent.substring(0, 200), // Limit user agent length
+        language: navigator.language,
+        screenResolution: `${screen.width}x${screen.height}`
+      }
+    };
 
-      console.log('Report submitted:', reportData);
-      toast.success('Rapport skickad framgångsrikt!', {
-        description: 'Tack för ditt bidrag till nationell säkerhet.'
-      });
-      
-      // Clear session data
-      sessionStorage.removeItem('lufor-csrf-token');
-      
-      onBack();
-    } catch (error) {
-      toast.error('Fel vid rapportering', {
-        description: 'Försök igen om ett ögonblick.'
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    onSubmit(reportData);
   };
 
   const renderStepContent = () => {
