@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Camera, Zap, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -147,8 +148,22 @@ const Index = () => {
           </p>
         </div>
         
+        {/* Static Report Button on Desktop */}
+        <div className="hidden sm:flex justify-center my-8">
+           <Button 
+              onClick={handleReport}
+              size="lg"
+              className="bg-red-600 hover:bg-red-700 text-white font-bold px-12 py-6 text-xl h-auto shadow-lg"
+              disabled={isSubmitting}
+              aria-label="Rapportera drönare"
+            >
+              <Zap className="w-6 h-6 mr-3" />
+              Rapportera drönare
+            </Button>
+        </div>
+        
         {/* Stats and Activity Section */}
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto mt-12">
           <StatsOverview />
         </div>
         
@@ -166,20 +181,6 @@ const Index = () => {
           <Zap className="w-6 h-6 mr-3" />
           Rapportera drönare
         </Button>
-      </div>
-
-      {/* Static Report Button on Desktop */}
-      <div className="hidden sm:flex justify-center my-8">
-         <Button 
-            onClick={handleReport}
-            size="lg"
-            className="bg-red-600 hover:bg-red-700 text-white font-bold px-12 py-6 text-xl h-auto shadow-lg"
-            disabled={isSubmitting}
-            aria-label="Rapportera drönare"
-          >
-            <Zap className="w-6 h-6 mr-3" />
-            Rapportera drönare
-          </Button>
       </div>
 
     </div>

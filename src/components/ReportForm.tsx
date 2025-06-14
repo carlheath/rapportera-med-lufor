@@ -224,7 +224,7 @@ const ReportForm = ({ mode, onBack, onSubmit, isSubmitting }: ReportFormProps) =
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 max-w-2xl">
         {/* Progress */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
@@ -239,8 +239,7 @@ const ReportForm = ({ mode, onBack, onSubmit, isSubmitting }: ReportFormProps) =
         </div>
 
         {/* Form Content */}
-        <Card className="max-w-2xl mx-auto">
-          <CardContent className="p-6">
+        <div className="p-6 bg-white/50 dark:bg-slate-900/50 rounded-lg backdrop-blur-md border border-blue-200/50 dark:border-slate-700/50">
             {renderStepContent()}
             
             {/* Navigation Buttons */}
@@ -287,8 +286,7 @@ const ReportForm = ({ mode, onBack, onSubmit, isSubmitting }: ReportFormProps) =
                 </Button>
               )}
             </div>
-          </CardContent>
-        </Card>
+          </div>
       </main>
     </div>
   );
