@@ -8,6 +8,7 @@
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
 
 @layer base {
+  /* ... keep existing code (root and .dark variables) */
   :root {
     --background: 210 20% 98%;
     --foreground: 215 28% 17%;
@@ -77,5 +78,12 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  /* Increase logo size in header */
+  header a img {
+    @apply h-14 w-auto;
   }
 }
