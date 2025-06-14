@@ -115,6 +115,24 @@ const en = {
     contactLabel: 'Email or phone number',
     contactPlaceholder: 'your.email@example.com or 070-123 45 67',
     contactGdpr: 'For follow-up only. Processed according to GDPR.',
+  },
+  statsOverview: {
+    errorTitle: "Error fetching data",
+    errorDescription: "Could not load statistics. Please try reloading the page.",
+    recentActivityTitle: "Recent Activity",
+    recentActivityDescription: "An overview of the latest incoming observations.",
+    noRecentActivity: "No recent activity.",
+    viewAllReports: "View all reports →",
+    statsTitle: "Statistics Overview",
+    totalReports: "Total reports",
+    today: "Today",
+    activeAlerts: "Active alerts",
+    lastUpdate: "Last update",
+    priorityHigh: "High",
+    priorityMedium: "Medium",
+    priorityLow: "Low",
+    priorityUnknown: "Unknown",
+    noDescription: "No description provided"
   }
 };
 export default en;

@@ -116,6 +116,24 @@ const sv = {
     contactLabel: 'E-post eller telefonnummer',
     contactPlaceholder: 'din.email@exempel.se eller 070-123 45 67',
     contactGdpr: 'Endast för uppföljning. Behandlas enligt GDPR.',
+  },
+  statsOverview: {
+    errorTitle: "Fel vid hämtning av data",
+    errorDescription: "Kunde inte ladda statistik. Försök att ladda om sidan.",
+    recentActivityTitle: "Senaste Aktivitet",
+    recentActivityDescription: "En översikt av de senast inkomna observationerna.",
+    noRecentActivity: "Ingen nylig aktivitet.",
+    viewAllReports: "Visa alla rapporter →",
+    statsTitle: "Statistiköversikt",
+    totalReports: "Totala rapporter",
+    today: "Idag",
+    activeAlerts: "Aktiva varningar",
+    lastUpdate: "Senaste uppdatering",
+    priorityHigh: "Hög",
+    priorityMedium: "Medel",
+    priorityLow: "Låg",
+    priorityUnknown: "Okänd",
+    noDescription: "Ingen beskrivning angiven"
   }
 };
 

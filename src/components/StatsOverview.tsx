@@ -6,8 +6,10 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useTranslation } from 'react-i18next';
 
 const StatsOverview = () => {
+  const { t } = useTranslation();
   const { data: statsData, isLoading: isLoadingStats, isError } = useQuery({
     queryKey: ['statsOverview'],
     queryFn: async () => {
@@ -87,13 +89,13 @@ const StatsOverview = () => {
   const getPriorityText = (priority: string) => {
     switch (priority) {
       case 'high':
-        return 'Hög';
+        return t('statsOverview.priorityHigh');
       case 'medium':
-        return 'Medel';
+        return t('statsOverview.priorityMedium');
       case 'low':
-        return 'Låg';
+        return t('statsOverview.priorityLow');
       default:
-        return 'Okänd';
+        return t('statsOverview.priorityUnknown');
     }
   };
 
@@ -101,10 +103,10 @@ const StatsOverview = () => {
     return (
       <Card className="border-red-200 dark:border-red-700">
         <CardHeader>
-          <CardTitle className="text-xl text-red-900 dark:text-red-200">Fel vid hämtning av data</CardTitle>
+          <CardTitle className="text-xl text-red-900 dark:text-red-200">{t('statsOverview.errorTitle')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-red-700 dark:text-red-300">Kunde inte ladda statistik. Försök att ladda om sidan.</p>
+          <p className="text-red-700 dark:text-red-300">{t('statsOverview.errorDescription')}</p>
         </CardContent>
       </Card>
     );
@@ -116,10 +118,10 @@ const StatsOverview = () => {
       <Card className="border-blue-200 dark:border-slate-700">
         <CardHeader>
           <CardTitle className="text-xl text-slate-900 dark:text-white">
-            Senaste Aktivitet
+            {t('statsOverview.recentActivityTitle')}
           </CardTitle>
           <CardDescription>
-            En översikt av de senast inkomna observationerna.
+            {t('statsOverview.recentActivityDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -146,7 +148,7 @@ const StatsOverview = () => {
                       <MapPin className="w-4 h-4 text-slate-500" />
                       <div>
                         <p className="text-sm font-medium text-slate-900 dark:text-white">
-                          {activity.description || "Ingen beskrivning angiven"}
+                          {activity.description || t('statsOverview.noDescription')}
                         </p>
                         <p className="text-xs text-slate-500 dark:text-slate-400">
                           {format(new Date(activity.created_at), 'HH:mm')}
@@ -160,12 +162,12 @@ const StatsOverview = () => {
                 );
               })
             ) : (
-              <p className="text-center text-slate-500 dark:text-slate-400 py-4">Ingen nylig aktivitet.</p>
+              <p className="text-center text-slate-500 dark:text-slate-400 py-4">{t('statsOverview.noRecentActivity')}</p>
             )}
           </div>
           <div className="text-center mt-6">
             <button className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
-              Visa alla rapporter →
+              {t('statsOverview.viewAllReports')}
             </button>
           </div>
         </CardContent>
@@ -173,7 +175,7 @@ const StatsOverview = () => {
 
       {/* Stats Module */}
       <div>
-        <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">Statistiköversikt</h3>
+        <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">{t('statsOverview.statsTitle')}</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Card className="border-blue-200 dark:border-slate-700">
             <CardContent className="p-4">
@@ -181,7 +183,7 @@ const StatsOverview = () => {
                   <TrendingUp className="w-5 h-5 text-blue-600" />
                   <div>
                     {isLoadingStats ? <Skeleton className="h-7 w-16 mb-1" /> : <p className="text-2xl font-bold text-slate-900 dark:text-white">{statsData?.totalReports.toLocaleString()}</p>}
-                    <p className="text-xs text-slate-600 dark:text-slate-300">Totala rapporter</p>
+                    <p className="text-xs text-slate-600 dark:text-slate-300">{t('statsOverview.totalReports')}</p>
                   </div>
                 </div>
             </CardContent>
@@ -193,7 +195,7 @@ const StatsOverview = () => {
                 <Clock className="w-5 h-5 text-green-600" />
                  <div>
                     {isLoadingStats ? <Skeleton className="h-7 w-12 mb-1" /> : <p className="text-2xl font-bold text-slate-900 dark:text-white">{statsData?.todayReports}</p>}
-                    <p className="text-xs text-slate-600 dark:text-slate-300">Idag</p>
+                    <p className="text-xs text-slate-600 dark:text-slate-300">{t('statsOverview.today')}</p>
                   </div>
               </div>
             </CardContent>
@@ -205,7 +207,7 @@ const StatsOverview = () => {
                 <AlertTriangle className="w-5 h-5 text-red-600" />
                 <div>
                   {isLoadingStats ? <Skeleton className="h-7 w-8 mb-1" /> : <p className="text-2xl font-bold text-slate-900 dark:text-white">{statsData?.activeAlerts}</p>}
-                  <p className="text-xs text-slate-600 dark:text-slate-300">Aktiva varningar</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-300">{t('statsOverview.activeAlerts')}</p>
                 </div>
               </div>
             </CardContent>
@@ -217,7 +219,7 @@ const StatsOverview = () => {
                 <MapPin className="w-5 h-5 text-purple-600" />
                 <div>
                     {isLoadingStats || !statsData?.lastUpdate ? <Skeleton className="h-5 w-28 mb-1" /> : <p className="text-sm font-bold text-slate-900 dark:text-white">{format(new Date(statsData.lastUpdate), 'yyyy-MM-dd HH:mm')}</p>}
-                  <p className="text-xs text-slate-600 dark:text-slate-300">Senaste uppdatering</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-300">{t('statsOverview.lastUpdate')}</p>
                 </div>
               </div>
             </CardContent>
